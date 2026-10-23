@@ -119,12 +119,11 @@
 (import_element (id) @namespace)
 (import_element alias: (id) @namespace)
 (gargs (_) @type.parameter)
-(struct_named_filed_initializer (id) @field)
+(struct_named_field_initializer (id) @field)
 (pattern_struct_elt (id) @field)
 
 ; Function definitions and calls
 (cdefn (function_name) @function)
-(edecl (function_name) @function)
 (wdecl (function_name) @function)
 (ecdecl_circuit (id) @function)
 (fun (id) @function)

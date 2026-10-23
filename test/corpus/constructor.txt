@@ -50,7 +50,7 @@ constructor (x: Field, y: Uint<32>) {
         (expression_sequence_stmt
           (expr_seq
             (expr
-              (assignment_expr
+              (assign_expr
                 (term
                   (id))
                 (expr
@@ -84,7 +84,7 @@ constructor (x: Field, y: Uint<32>,) {
         (expression_sequence_stmt
           (expr_seq
             (expr
-              (assignment_expr
+              (assign_expr
                 (term
                   (id))
                 (expr
@@ -142,7 +142,7 @@ constructor (
                 (expression_sequence_stmt
                   (expr_seq
                     (expr
-                      (assignment_expr
+                      (assign_expr
                         (term
                           (id))
                         (expr

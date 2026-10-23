@@ -31,7 +31,6 @@ module.exports = grammar({
   name: 'compact',
 
   conflicts: ($) => [
-    [$.pattern, $.arg],
     [$.fun, $.term, $.tref],
     [$.fun, $.pattern, $.term],
     [$.pattern, $.term],
@@ -71,7 +70,6 @@ module.exports = grammar({
     //        →    ldecl
     //        →    lconstructor
     //        →    cdefn
-    //        →    edecl
     //        →    wdecl
     //        →    ecdecl
     //        →    struct
@@ -86,12 +84,11 @@ module.exports = grammar({
         $.ldecl,
         $.lconstructor,
         $.cdefn,
-        $.edecl,
         $.wdecl,
         $.ecdecl,
         $.struct,
         $.enumdef,
-        $.type_decl,
+        $.type_alias_declaration,
       ),
 
     // Pragma rules
@@ -157,8 +154,8 @@ module.exports = grammar({
 
     // Type-declaration (type-alias-declaration)
     //
-    // type-declaration → export^opt new^opt type type-name gparams^opt = type ;
-    type_decl: ($) =>
+    // type-alias-declaration → export^opt new^opt type type-name gparams^opt = type ;
+    type_alias_declaration: ($) =>
       seq(
         optional(field('export', $.export)),
         optional('new'),
@@ -298,23 +295,6 @@ module.exports = grammar({
         ':',
         field('type', $.type),
         field('body', $.block),
-      ),
-
-    // External-declaration (edecl)
-    //
-    // edecl → export^opt circuit id gparams^opt ( arg , … , arg ) : type ;
-    edecl: ($) =>
-      seq(
-        optional(field('export', $.export)),
-        'circuit',
-        field('id', $.function_name),
-        optional(field('gparams', $.gparams)),
-        '(',
-        field('args', commaSep(field('arg', $.arg))),
-        ')',
-        ':',
-        field('type', $.type),
-        ';',
       ),
 
     // Witness-declaration (wdecl)
@@ -506,13 +486,11 @@ module.exports = grammar({
           $.return_stmt,
           $.if_stmt,
           $.for_stmt,
-          $.assert_stmt,
           $.const_stmt,
           $.block,
         ),
       ),
 
-    assert_stmt: ($) => seq('assert', field('condition', $.expr), field('message', $.str), ';'),
     return_stmt: ($) => seq('return', optional(field('value', $.expr_seq)), ';'),
     if_stmt: ($) => prec.right(seq('if', '(', field('condition', $.expr_seq), ')', field('then_branch', $.stmt), optional(seq('else', field('else_branch', $.stmt))))),
     for_stmt: ($) => seq('for', '(', 'const', field('counter', $.id), 'of',
@@ -568,14 +546,14 @@ module.exports = grammar({
         field('else_branch', $.expr),
       ),
 
-    expr: ($) => choice($.conditional_expr, $.assignment_expr, $._expr0),
+    expr: ($) => choice($.conditional_expr, $.assign_expr, $._expr0),
 
     // Assignment expression
     //
     // expr → expr0 = expr
     //      → expr0 += expr
     //      → expr0 -= expr
-    assignment_expr: ($) =>
+    assign_expr: ($) =>
       prec.right(
         seq(
           field('left', $._expr0),
@@ -701,9 +679,9 @@ module.exports = grammar({
         $.map_term, // Map function with one or more expressions
         $.fold_term, // Fold with initial value and list
         $.function_call_term, // Function call with zero or more expressions
-        $.slice_expr, // Slice with size and range expressions
+        $.slice_term, // Slice with size and range expressions
         $.disclose_term, // Disclose with single expression
-        $.assert_expr, // Assert with condition and message
+        $.assert_term, // Assert with condition and message
         $.bytes_literal, // Bytes literal with optional spread
         $.struct_term, // Struct literal with type reference
         $.array_literal, // Array literal with optional spread
@@ -716,13 +694,13 @@ module.exports = grammar({
     fold_term: ($) => seq('fold', '(', field('fun', $.fun), ',', field('init_value', $.expr), ',', commaSep1(field('expr', $.expr)), ')'),
     struct_term: ($) => seq(field('tref', $.tref), '{', commaSep($.struct_arg), '}'),
     function_call_term: ($) => seq(field('fun', $.fun), '(', commaSep(field('expr', $.expr)), ')'),
-    slice_expr: ($) => seq('slice', '<', field('tsize', $.tsize), '>', '(', field('expr', $.expr), ',', field('expr', $.expr), ')'),
+    slice_term: ($) => seq('slice', '<', field('tsize', $.tsize), '>', '(', field('expr', $.expr), ',', field('expr', $.expr), ')'),
     disclose_term: ($) => seq('disclose', '(', field('expr', $.expr), ')'),
-    assert_expr: ($) => prec(2, seq('assert', '(', field('condition', $.expr), ',', field('message', $.str), ')')),
+    assert_term: ($) => prec(2, seq('assert', '(', field('condition', $.expr), ',', field('message', $.str), ')')),
     array_literal: ($) => seq('[', commaSep(field('element', $.tuple_arg)), ']'),
     bytes_literal: ($) => seq('Bytes', '[', commaSep(field('element', $.tuple_arg)), ']'),
-    tuple_arg: ($) => choice($.spread_expr, field('expr', $.expr)),
-    spread_expr: ($) => seq('...', field('expr', $.expr)),
+    tuple_arg: ($) => choice($.spread_element, field('expr', $.expr)),
+    spread_element: ($) => seq('...', field('expr', $.expr)),
     expr_seq_term: ($) => seq('(', $.expr_seq, ')'),
 
     // Literal (lit)
@@ -751,11 +729,11 @@ module.exports = grammar({
     struct_arg: ($) =>
       choice(
         $.expr,
-        $.struct_named_filed_initializer,
-        $.spread_expr,
+        $.struct_named_field_initializer,
+        $.spread_element,
       ),
 
-    struct_named_filed_initializer: ($) => seq(field('id', $.id), ':', field('expr', $.expr)),
+    struct_named_field_initializer: ($) => seq(field('id', $.id), ':', field('expr', $.expr)),
 
     // Function (fun)
     //

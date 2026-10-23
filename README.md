@@ -10,18 +10,27 @@ based on the [formal grammar][grammar] published by the Midnight Foundation.
 
 ## Compatibility
 
-This release supports Compact **language 0.23.0** (toolchain **0.31.1**,
-runtime **0.16.0**), the version supported on Midnight mainnet. See the
-[compatibility matrix][support-matrix] for details.
+This grammar targets Compact **language 0.23.0** and newer (toolchain
+**0.31.1** and newer, runtime **0.16.0**), the version supported on Midnight
+mainnet. Support starts at **0.31.1**: the grammar accepts the language as
+defined by that toolchain and no longer accepts legacy syntax such as top-level
+body-less `circuit` declarations or the old `assert expr "msg";` statement.
+See the [compatibility matrix][support-matrix] for details.
 
 | Grammar | Compact language | Compact toolchain |
 |---------|------------------|-------------------|
+| 0.2.x   | 0.23.0           | 0.31.1            |
 | 0.1.x   | 0.23.0           | 0.31.1            |
 
 The grammar follows independent [Semantic Versioning][semver]: the parse tree
 is the public API, so adding nodes or fields is a minor release and breaking
 tree changes are major. The supported Compact version is tracked in this table
 and in the package metadata, not in the grammar version.
+
+Grammars are validated against the compiler's own corpus with
+[`scripts/conformance.sh`](scripts/conformance.sh); see
+[`scripts/grammar-delta.sh`](scripts/grammar-delta.sh) for checking a new
+Compact release.
 
 ## Fork
 

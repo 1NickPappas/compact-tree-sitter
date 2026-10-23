@@ -16,7 +16,7 @@ circuit foo(): Field {
           (expr_seq
             (expr
               (term
-                (slice_expr
+                (slice_term
                   (tsize
                     (nat))
                   (expr
@@ -82,7 +82,7 @@ circuit foo(): Field {
               (term
                 (bytes_literal
                   (tuple_arg
-                    (spread_expr
+                    (spread_element
                       (expr
                         (term
                           (id)))))
@@ -110,7 +110,7 @@ circuit foo(): Field {
           (expr_seq
             (expr
               (term
-                (assert_expr
+                (assert_term
                   (expr
                     (comparison_expr
                       (term
@@ -145,7 +145,7 @@ circuit foo(): Field {
                       (term
                         (id))))
                   (tuple_arg
-                    (spread_expr
+                    (spread_element
                       (expr
                         (term
                           (id))))))))))))))
@@ -235,7 +235,7 @@ circuit foo(): Field {
                 (expression_sequence_stmt
                   (expr_seq
                     (expr
-                      (assignment_expr
+                      (assign_expr
                         (term
                           (id))
                         (expr
@@ -260,14 +260,14 @@ circuit foo(): Field {
           (expr_seq
             (expr
               (term
-                (assert_expr
+                (assert_term
                   (expr
                     (comparison_expr
                       (term
                         (expr_seq_term
                           (expr_seq
                             (expr
-                              (assignment_expr
+                              (assign_expr
                                 (term
                                   (id))
                                 (expr
@@ -379,7 +379,7 @@ circuit foo(): Field {
         (return_stmt
           (expr_seq
             (expr
-              (assignment_expr
+              (assign_expr
                 (term
                   (id))
                 (expr

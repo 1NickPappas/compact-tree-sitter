@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-10-23
+
+Compiler-aligned grammar with stricter 0.31.1 semantics. This is a **breaking
+release**: several node names changed and legacy syntax is no longer accepted.
+Support starts at Compact toolchain 0.31.1 (language 0.23.0, runtime 0.16.0).
+
+### Changed (breaking)
+
+- Renamed nodes to match the compiler's AST / production names:
+  - `type_decl` → `type_alias_declaration`
+  - `slice_expr` → `slice_term`
+  - `assert_expr` → `assert_term`
+  - `assignment_expr` → `assign_expr`
+  - `spread_expr` → `spread_element`
+  - `struct_named_filed_initializer` → `struct_named_field_initializer`
+    (typo fix)
+
+### Removed (breaking)
+
+- Top-level body-less `circuit id(...) : type;` declarations (`edecl`). This
+  form is not part of the 0.31.1 grammar; declare a circuit with a body, or use
+  `witness`.
+- Legacy `assert expr "msg";` statement (`assert_stmt`). Use the
+  `assert(expr, "msg")` expression instead.
+
+### Added
+
+- `scripts/conformance.sh` — parse the compiler corpus and fail on regressions
+  against a baseline; also `scripts/grammar-delta.sh` for comparing two
+  compiler releases. Both are wired into CI (Conformance workflow).
+
 ## [0.1.0] - 2025-10-23
 
 First release of the community-maintained fork. It supports the Compact
@@ -51,4 +82,5 @@ tracked in the README and in the package metadata, not in the grammar version.
   compilation fail.
 
 [0.1.0]: https://github.com/1NickPappas/compact-tree-sitter/releases/tag/v0.1.0
+[0.2.0]: https://github.com/1NickPappas/compact-tree-sitter/releases/tag/v0.2.0
 [semver]: https://semver.org/spec/v2.0.0.html

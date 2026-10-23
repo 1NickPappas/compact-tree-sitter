@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tree-sitter-compact"
 description = "A zero-knowledge smart contract programming language"
-version = "0.1.0"
+version = "0.2.0"
 keywords = ["incremental", "parsing", "tree-sitter", "compact"]
 classifiers = [
   "Intended Audience :: Developers",

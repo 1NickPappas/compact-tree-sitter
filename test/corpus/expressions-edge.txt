@@ -16,14 +16,14 @@ circuit foo(): Field {
           (expr_seq
             (expr
               (term
-                (assert_expr
+                (assert_term
                   (expr
                     (comparison_expr
                       (term
                         (expr_seq_term
                           (expr_seq
                             (expr
-                              (assignment_expr
+                              (assign_expr
                                 (term
                                   (id))
                                 (expr
@@ -53,11 +53,11 @@ circuit foo(): Field {
         (expression_sequence_stmt
           (expr_seq
             (expr
-              (assignment_expr
+              (assign_expr
                 (term
                   (id))
                 (expr
-                  (assignment_expr
+                  (assign_expr
                     (term
                       (id))
                     (expr
@@ -82,7 +82,7 @@ circuit foo(): Field {
           (expr_seq
             (expr
               (term
-                (slice_expr
+                (slice_term
                   (tsize
                     (id))
                   (expr
@@ -142,7 +142,7 @@ circuit foo(): Field {
                 (expression_sequence_stmt
                   (expr_seq
                     (expr
-                      (assignment_expr
+                      (assign_expr
                         (term
                           (id))
                         (expr

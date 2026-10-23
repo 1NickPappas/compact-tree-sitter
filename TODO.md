@@ -53,13 +53,14 @@ See the investigation notes: the WIP branch `feat/grammar-v0.30.0` targets the
 - [x] Phase 0 — measuring sticks:
       `scripts/grammar-delta.sh` (compiler grammar diff between tags) and
       `scripts/conformance.sh` (parse the whole compiler corpus, baseline).
-- [ ] Phase 1 — rename nodes to compiler names and fix the
-      `struct_named_filed_initializer` typo; re-run the conformance gate.
-- [ ] Phase 2 — decide on legacy `edecl` / `assert_stmt` (drop for strict
-      0.31.1, or keep as a superset) and act.
+- [x] Phase 1 — renamed nodes to compiler names (`type_alias_declaration`,
+      `slice_term`, `assert_term`, `assign_expr`, `spread_element`) and fixed
+      the `struct_named_field_initializer` typo; conformance gate green.
+- [x] Phase 2 — dropped legacy `edecl` and `assert_stmt` for strict 0.31.1
+      support. No real 0.31.1 corpus file used them.
 - [ ] Phase 3 — port the WIP branch corpus tests as *candidate inputs*,
       validating each against the 0.31.1 parser before keeping.
-- [ ] Phase 4 — cut and publish 0.2.0 (breaking node renames).
+- [ ] Phase 4 — publish 0.2.0 (prepared; needs tag push).
 - [ ] Optional: advertise `0.22.x–0.23.0` language support after verifying
       the near-identical 0.30.0 grammar passes the conformance gate.
 

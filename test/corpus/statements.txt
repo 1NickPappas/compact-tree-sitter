@@ -17,7 +17,7 @@ circuit foo(): Bool {
         (expression_sequence_stmt
           (expr_seq
             (expr
-              (assignment_expr
+              (assign_expr
                 (term
                   (id))
                 (expr
@@ -44,7 +44,7 @@ circuit foo(): Bool {
         (expression_sequence_stmt
           (expr_seq
             (expr
-              (assignment_expr
+              (assign_expr
                 (term
                   (id))
                 (expr
@@ -146,7 +146,7 @@ circuit foo(): Bool {
             (expression_sequence_stmt
               (expr_seq
                 (expr
-                  (assignment_expr
+                  (assign_expr
                     (term
                       (id))
                     (expr
@@ -198,7 +198,7 @@ circuit foo(): Bool {
                 (expression_sequence_stmt
                   (expr_seq
                     (expr
-                      (assignment_expr
+                      (assign_expr
                         (term
                           (id))
                         (expr
@@ -234,64 +234,16 @@ circuit foo(): Bool {
                 (expression_sequence_stmt
                   (expr_seq
                     (expr
-                      (assignment_expr
+                      (assign_expr
                         (term
                           (id))
                         (expr
                           (term
                             (id)))))))))))))))
 
-===============
-assert statement with message
-===============
-circuit foo(): Bool {
-    assert x != 0 "Division by zero error";
-}
----
-(source_file
-    (cdefn
-    (function_name)
-    (type
-        (tref
-        (id)))
-    (block
-        (stmt
-        (assert_stmt
-            (expr
-            (comparison_expr
-                (term
-                (id))
-                (not_equals)
-                (term
-                (lit
-                    (nat)))))
-            (str))))))
 
-===============
-assert statement without message
-===============
-circuit foo(): Bool {
-    assert x > 0 "fail!";
-}
----
-(source_file
-    (cdefn
-    (function_name)
-    (type
-        (tref
-        (id)))
-    (block
-        (stmt
-        (assert_stmt
-            (expr
-            (rel_comparison_expr
-                (term
-                (id))
-                (greater_than)
-                (term
-                (lit
-                    (nat)))))
-            (str))))))
+
+
 
 ===============
 const declaration with type
@@ -375,7 +327,7 @@ circuit foo(): Bool {
             (expression_sequence_stmt
               (expr_seq
                 (expr
-                  (assignment_expr
+                  (assign_expr
                     (term
                       (id))
                     (expr
@@ -660,13 +612,13 @@ circuit foo(): Bool {
                     (tref
                     (id))
                     (struct_arg
-                    (struct_named_filed_initializer
+                    (struct_named_field_initializer
                         (id)
                         (expr
                         (term
                             (id)))))
                     (struct_arg
-                    (struct_named_filed_initializer
+                    (struct_named_field_initializer
                         (id)
                         (expr
                         (term
