@@ -1,0 +1,98 @@
+name: Publish npm
+
+on:
+  push:
+    tags: ["*"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write
+
+# This mirrors tree-sitter's reusable package-npm workflow, but with a runner
+# matrix we control. The upstream matrix includes `windows-11-arm`, where
+# node-gyp currently fails to detect the runner's Visual Studio 18 and the whole
+# npm publish is skipped. We build prebuilds on the runners that work; Windows
+# arm64 users fall back to a source build via node-gyp-build.
+jobs:
+  build_wasm:
+    name: Build WASM
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          cache: npm
+          node-version: "22"
+      - name: Install dependencies
+        run: npm ci --omit peer --omit optional
+      - name: Build Wasm binary
+        run: npx tree-sitter build --wasm
+      - name: Upload Wasm binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: prebuilds-wasm
+          path: "*.wasm"
+          retention-days: 2
+
+  build_node:
+    name: Build Node on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-2022
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+          - macos-15
+          - macos-15-intel
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          cache: npm
+          node-version: "22"
+      - name: Install dependencies
+        run: npm ci --omit peer --omit optional
+      - name: Build prebuilds
+        run: npx prebuildify -t 20.19.5
+      - name: Upload prebuilds
+        uses: actions/upload-artifact@v4
+        with:
+          name: prebuilds-${{ matrix.os }}
+          path: prebuilds/**
+          retention-days: 2
+
+  publish:
+    name: Publish to npm
+    needs: [build_wasm, build_node]
+    runs-on: ubuntu-24.04
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/tree-sitter-compact
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          cache: npm
+          node-version: "22"
+          registry-url: https://registry.npmjs.org/
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: prebuilds
+          pattern: prebuilds-*
+          merge-multiple: true
+      - name: Move Wasm binary to package root
+        run: mv -v prebuilds/*.wasm . || true
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
