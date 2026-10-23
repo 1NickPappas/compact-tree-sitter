@@ -46,7 +46,6 @@ zig-out/
 *.tgz
 *.zip
 Cargo.lock
-package-lock.json
 
 # Conformance/delta caches
 .cache/
