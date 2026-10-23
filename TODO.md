@@ -61,7 +61,7 @@ See the investigation notes: the WIP branch `feat/grammar-v0.30.0` targets the
 - [x] Phase 3 — audited the WIP branch corpus: all 159 inputs parse with the
       0.2.0 grammar, so porting its 0.30-era expected trees adds no acceptance
       coverage. Skipped; the conformance gate is the coverage guard.
-- [ ] Phase 4 — publish 0.2.0 (prepared; needs tag push).
+- [x] Phase 4 — published 0.2.0 (crates.io + GitHub release).
 - [ ] Optional: advertise `0.22.x–0.23.0` language support after verifying
       the near-identical 0.30.0 grammar passes the conformance gate.
 
