@@ -36,8 +36,10 @@ automated guarantee that invalid Compact is rejected. Add a small harness:
 ## Release follow-ups
 
 - [ ] Create the GitHub repo `1NickPappas/compact-tree-sitter` and push.
-- [ ] Add secrets: `NPM_TOKEN`, `CARGO_REGISTRY_TOKEN`, `PYPI_API_TOKEN`.
+- [ ] Add secret `CARGO_REGISTRY_TOKEN` (crates.io only for now).
 - [ ] Push tag `v0.1.0` to trigger the publish workflow.
+- [ ] Later: enable npm/PyPI in `.github/workflows/publish.yml` and add
+      `NPM_TOKEN` / `PYPI_API_TOKEN`.
 
 ## Tracking a moving language target
 
