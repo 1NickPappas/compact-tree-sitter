@@ -14,7 +14,7 @@ community-maintained [tree-sitter][tree-sitter] grammar for the
   [Node.js or Bun](https://nodejs.org/) and the `tree-sitter` CLI:
 
   ```sh
-  npm install -g tree-sitter-cli   # or: bun add -g tree-sitter-cli
+  npm install -g tree-sitter-cli
   ```
 
 ## Submitting issues
