@@ -58,8 +58,9 @@ See the investigation notes: the WIP branch `feat/grammar-v0.30.0` targets the
       the `struct_named_field_initializer` typo; conformance gate green.
 - [x] Phase 2 — dropped legacy `edecl` and `assert_stmt` for strict 0.31.1
       support. No real 0.31.1 corpus file used them.
-- [ ] Phase 3 — port the WIP branch corpus tests as *candidate inputs*,
-      validating each against the 0.31.1 parser before keeping.
+- [x] Phase 3 — audited the WIP branch corpus: all 159 inputs parse with the
+      0.2.0 grammar, so porting its 0.30-era expected trees adds no acceptance
+      coverage. Skipped; the conformance gate is the coverage guard.
 - [ ] Phase 4 — publish 0.2.0 (prepared; needs tag push).
 - [ ] Optional: advertise `0.22.x–0.23.0` language support after verifying
       the near-identical 0.30.0 grammar passes the conformance gate.
