@@ -40,8 +40,10 @@ must-fail harness is still wanted:
 - [x] Create the GitHub repo `1NickPappas/compact-tree-sitter` and push.
 - [x] Add secret `CARGO_REGISTRY_TOKEN` (crates.io only for now).
 - [x] Push tag `v0.1.0` to trigger the publish workflow (crate published).
-- [ ] Later: enable npm/PyPI in `.github/workflows/publish.yml` and add
-      `NPM_TOKEN` / `PYPI_API_TOKEN`.
+- [x] Enabled PyPI (in `publish.yml`) and npm (dedicated `publish-npm.yml`).
+- [x] Added `NPM_TOKEN` / `PYPI_API_TOKEN`; published 0.2.0 to npm and PyPI.
+- [ ] Consider npm trusted publishing (OIDC) or accepted staged publishing for
+      future releases; npm is restricting 2FA-bypass tokens for direct publish.
 
 ## 0.2.0 consolidation (compiler-aligned grammar)
 

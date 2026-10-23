@@ -2,6 +2,8 @@
 
 [![CI][ci]](https://github.com/1NickPappas/compact-tree-sitter/actions/workflows/tests.yml)
 [![crates][crates]](https://crates.io/crates/tree-sitter-compact)
+[![npm][npm]](https://www.npmjs.com/package/tree-sitter-compact)
+[![pypi][pypi]](https://pypi.org/project/tree-sitter-compact/)
 
 Compact grammar for [tree-sitter][].
 
@@ -94,3 +96,5 @@ import tree_sitter_compact
 
 [ci]: https://img.shields.io/github/actions/workflow/status/1NickPappas/compact-tree-sitter/tests.yml?logo=github&label=CI
 [crates]: https://img.shields.io/crates/v/tree-sitter-compact?logo=rust
+[npm]: https://img.shields.io/npm/v/tree-sitter-compact?logo=npm
+[pypi]: https://img.shields.io/pypi/v/tree-sitter-compact?logo=pypi&logoColor=ffd242
