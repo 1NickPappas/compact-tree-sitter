@@ -1,64 +1,59 @@
 # Contributing
 
-We welcome your contributions to the Midnight network! By contributing, you'll play a vital role in shaping the future of a blockchain focused on data privacy.
+Thanks for your interest in contributing to `compact-tree-sitter`! This is a
+community-maintained [tree-sitter][tree-sitter] grammar for the
+[Compact programming language][compact].
 
-## Getting Started
+## Getting started
 
-* **Review Existing Contributions and Issues:** Before submitting, please check if a similar issue or feature request already exists by searching our issue tracker.
-* **Understand the Project:** Familiarize yourself with Midnight's architecture, technology, and coding standards. You can find relevant information in our litepaper. 
-* **Set up Your Development Environment:** Ensure you have the necessary tools and dependencies installed. See our developer [documentation](https://docs.midnight.network/) for detailed instructions. 
+- **Review existing issues and pull requests** before submitting, to avoid
+  duplicates.
+- **Understand the grammar.** The grammar is defined in [`grammar.js`](grammar.js)
+  and is based on the [Compact formal grammar][grammar].
+- **Set up your development environment.** You will need
+  [Node.js or Bun](https://nodejs.org/) and the `tree-sitter` CLI:
 
-## Submitting Issues
+  ```sh
+  npm install -g tree-sitter-cli   # or: bun add -g tree-sitter-cli
+  ```
 
-Use one of the [templates] to submit an issue to the Project Board. The Midnight team or a community member will address it if it's relevant.
-Ensure the title is a clear summary of the requirement and provides enough context.
+## Submitting issues
 
-**Issue Types:**
+Use one of the [issue templates](.github/ISSUE_TEMPLATE) to report a bug, request
+a feature, or suggest a documentation improvement. Please make the title a clear
+summary and include enough context to reproduce or evaluate the request.
 
-* **Bug Report:** Provide detailed information about the issue, including steps to reproduce it, expected behavior, and actual behavior, screenshots, or any other relevant information.
-* **Documentation Improvement:** Clearly describe the improvement requested for existing content and/or raise missing areas of documentation and provide details for what should be included.  
-* **Feature Request:** Clearly describe your feature, its benefits, and most importantly, the expected outcome. This helps us analyze the proposed solution and develop alternatives.
-* **Enhancement:** (WIP)
+## Code contribution process
 
-## Code Contribution Process
+1. **Fork the repository** and create a branch for your change.
+2. **Make your changes.** If you edit [`grammar.js`](grammar.js), regenerate the
+   parser with `tree-sitter generate`.
+3. **Add tests.** Grammar changes must include corpus tests under
+   [`test/corpus/`](test/corpus). Run them with:
 
-* **Pull Requests:** Code contributions are submitted via Pull Requests.
-* **Fork the Repository:** Create your own fork of the Midnight repository.
-* **Create a Branch:** Make your changes in a separate branch.
-* **Follow Coding Standards:** Adhere to the coding style guides specified in our documentation.
-* **Write Tests:** Include unit tests and integration tests to cover your changes.
-* **Commit Messages:** Write clear and concise commit messages.
-* **Submit Pull Request:** Submit your pull request to the appropriate branch in the main repository.
-* **Code Review:** All pull requests undergo code review by project maintainers. Be prepared to address feedback from reviewers.
+   ```sh
+   tree-sitter test
+   ```
 
-## Requirements for Acceptable Contributions:
+4. **Follow existing style.** Keep commit messages clear and concise.
+5. **Open a pull request** against `main` and be prepared to address review
+   feedback.
 
-* **Coding Standards:** Code must adhere to the coding style guides defined in our documentation
-* **Testing:** New functionality must include corresponding unit tests and integration tests.
-* **Documentation:** Code changes should be accompanied by proposed relevant documentation updates.
-* **License:** All contributions must be compatible with the project's license. Where possible all files should have this license header:
+## Requirements for acceptable contributions
 
-```
- <I>// This file is part of <B>REPLACE WITH REPO-NAME</B>.<BR>
- // Copyright (C) 2025 Midnight Foundation<BR>
- // SPDX-License-Identifier: Apache-2.0<BR>
- // Licensed under the Apache License, Version 2.0 (the "License");<BR>
- // You may not use this file except in compliance with the License.<BR>
- // You may obtain a copy of the License at<BR>
- //<BR>
- //	http://www.apache.org/licenses/LICENSE-2.0<BR>
- //<BR>
- // Unless required by applicable law or agreed to in writing, software<BR>
- // distributed under the License is distributed on an "AS IS" BASIS,<BR>
- // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<BR>
- // See the License for the specific language governing permissions and<BR>
- // limitations under the License.</I>
-```
+- **Tests:** New or changed grammar functionality must include corresponding
+  corpus tests.
+- **Documentation:** Relevant changes should update the documentation.
+- **License:** All contributions must be compatible with the project's license.
+  By submitting a pull request you agree that your contribution is licensed
+  under the [Apache License 2.0](LICENSE).
 
-Where this is not possible, a LICENSE.md file in the same dir is required.
+## Support and communication
 
-## Support and Communication:
+Questions and discussion happen through
+[GitHub issues](https://github.com/1NickPappas/compact-tree-sitter/issues) and
+[pull requests](https://github.com/1NickPappas/compact-tree-sitter/pulls).
 
-Ask anything about Midnight! We're here to help. Connect with us on [Discord](https://discord.com/invite/midnightnetwork), [Telegram](https://t.me/Midnight_Network_Official), and [X](https://x.com/MidnightNtwrk) and Join the Community to stay updated and engage with other Midnight enthusiasts.
-
-We appreciate your contributions!
+[tree-sitter]: https://tree-sitter.github.io/
+[compact]: https://docs.midnight.network/develop/reference/compact/lang-ref
+[grammar]: https://docs.midnight.network/develop/reference/compact/compact-grammar

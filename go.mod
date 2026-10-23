@@ -1,4 +1,4 @@
-module github.com/midnight-ntwrk/tree-sitter-compact
+module github.com/1NickPappas/compact-tree-sitter
 
 go 1.22
 

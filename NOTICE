@@ -1,0 +1,15 @@
+tree-sitter-compact
+Copyright 2025 Nick Pappas and the compact-tree-sitter contributors
+
+This product is a community fork of the Compact grammar originally developed
+by the Midnight Foundation and contributors:
+
+    midnightntwrk/compact-tree-sitter
+    https://github.com/midnightntwrk/compact-tree-sitter
+
+Original work Copyright the Midnight Foundation and contributors.
+Modifications Copyright 2025 Nick Pappas and the compact-tree-sitter
+contributors.
+
+Both the original work and this fork are licensed under the Apache License,
+Version 2.0. See the LICENSE file for the full license text.

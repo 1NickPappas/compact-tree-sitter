@@ -14,10 +14,14 @@
     }
   ],
   "metadata": {
-    "version": "0.1.0",
+    "version": "0.31.1",
     "license": "Apache",
     "description": "A zero-knowledge smart contract programming language",
     "authors": [
+      {
+        "name": "Nick Pappas",
+        "url": "https://github.com/1NickPappas"
+      },
       {
         "name": "Lucas Rosa",
         "email": "lucas.rosa@shielded.io",
@@ -25,7 +29,7 @@
       }
     ],
     "links": {
-      "repository": "https://github.com/midnight-ntwrk/tree-sitter-compact"
+      "repository": "https://github.com/1NickPappas/compact-tree-sitter"
     }
   },
   "bindings": {

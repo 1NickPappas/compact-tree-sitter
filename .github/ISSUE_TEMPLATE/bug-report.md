@@ -2,7 +2,7 @@
 name: Bug report
 about: Submit a bug report
 title: ""
-labels: compact-tree-sitter, public
+labels: bug
 assignees: ""
 ---
 

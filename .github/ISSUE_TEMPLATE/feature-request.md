@@ -2,7 +2,7 @@
 name: Feature request
 about: Submit a proposal for a new feature
 title: ""
-labels: compact-tree-sitter, public
+labels: enhancement
 assignees: ""
 ---
 

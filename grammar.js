@@ -1,5 +1,6 @@
 // This file is part of compact-tree-sitter.
 // Copyright (C) 2025 Midnight Foundation
+// Modifications Copyright (C) 2025 Nick Pappas and compact-tree-sitter contributors
 // SPDX-License-Identifier: Apache-2.0
 // Licensed under the Apache License, Version 2.0 (the "License");
 // You may not use this file except in compliance with the License.
@@ -16,7 +17,11 @@
 /**
  * @file A zero-knowledge smart contract programming language
  * @author Lucas Rosa <lucas.rosa@shielded.io>
- * @license Apache
+ * @author Nick Pappas <https://github.com/1NickPappas>
+ * @license Apache-2.0
+ *
+ * Community fork targeting the Compact toolchain 0.31.1 (language 0.23.0),
+ * which is the version supported on Midnight mainnet. See NOTICE for attribution.
  */
 
 /// <reference types="tree-sitter-cli/dsl" />
@@ -32,6 +37,7 @@ module.exports = grammar({
     [$.pattern, $.term],
     [$.fun, $.term],
     [$.fun, $.pattern],
+    [$.pattern, $.array_literal],
   ],
 
   extras: ($) => [
@@ -45,8 +51,15 @@ module.exports = grammar({
     // program → pelt … pelt eof
     source_file: ($) => repeat($._pelt),
 
-    // Comment rule
-    comment: ($) => token(seq("//", /[^\n]*/)),
+    // Comments
+    //
+    // Line comments start with // and run to the end of the line.
+    // Block comments are delimited by /* and */ and do not nest.
+    comment: ($) =>
+      choice(
+        token(seq("//", /[^\n]*/)),
+        token(/\/\*([^*]|\*[^\/])*\*\//),
+      ),
 
     // Program-element (pelt)
     //
@@ -78,6 +91,7 @@ module.exports = grammar({
         $.ecdecl,
         $.struct,
         $.enumdef,
+        $.type_decl,
       ),
 
     // Pragma rules
@@ -141,6 +155,21 @@ module.exports = grammar({
         $.less_than_or_equal,
       ),
 
+    // Type-declaration (type-alias-declaration)
+    //
+    // type-declaration → export^opt new^opt type type-name gparams^opt = type ;
+    type_decl: ($) =>
+      seq(
+        optional(field("export", $.export)),
+        optional("new"),
+        "type",
+        field("name", $.type_name),
+        optional(field("gparams", $.gparams)),
+        "=",
+        field("type", $.type),
+        ";",
+      ),
+
     // Include (incld)
     //
     // incld → include file ;
@@ -173,9 +202,29 @@ module.exports = grammar({
 
     // Import-declaration (idecl)
     //
-    // idecl → import import-name gargs^opt prefix^opt ;
+    // idecl → import import-selection^opt import-name gargs^opt prefix^opt ;
     idecl: ($) =>
-      seq("import", field("id", $.import_name), optional(field("gargs", $.gargs)), optional(field("prefix", $.prefix)), ";"),
+      seq(
+        "import",
+        optional(field("selection", $.import_selection)),
+        field("id", $.import_name),
+        optional(field("gargs", $.gargs)),
+        optional(field("prefix", $.prefix)),
+        ";",
+      ),
+
+    // Import-selection (import-selection)
+    //
+    // import-selection → { import-element , … , import-element ,^opt } from
+    import_selection: ($) =>
+      seq("{", commaSep(field("element", $.import_element)), "}", "from"),
+
+    // Import-element (import-element)
+    //
+    // import-element → id
+    //                → id as id
+    import_element: ($) =>
+      seq(field("id", $.id), optional(seq("as", field("alias", $.id)))),
 
     // Import-name (import-name)
     //
@@ -287,21 +336,31 @@ module.exports = grammar({
 
     // External-contract-declaration (ecdecl)
     //
-    // ecdecl	→ export^opt contract contract-name { ecdecl-circuit … ecdecl-circuit } ;^opt
+    // ecdecl → export^opt contract contract-name { ecdecl-circuit ; … ; ecdecl-circuit ;^opt } ;^opt
+    //        → export^opt contract contract-name { ecdecl-circuit , … , ecdecl-circuit ,^opt } ;^opt
     ecdecl: ($) =>
       seq(
         optional(field("export", $.export)),
         "contract",
         field("name", $.contract_name),
         "{",
-        repeat(field("contract_circuit", $.ecdecl_circuit)),
+        optional($._ecdecl_circuits),
         "}",
         optional(";"),
       ),
 
+    // Circuits may be separated by semicolons or commas, with an optional
+    // trailing separator.
+    _ecdecl_circuits: ($) =>
+      seq(
+        field("contract_circuit", $.ecdecl_circuit),
+        repeat(seq(choice(";", ","), field("contract_circuit", $.ecdecl_circuit))),
+        optional(choice(";", ",")),
+      ),
+
     // External-contract-circuit (ecdecl-circuit)
     //
-    // ecdecl-circuit →	 pure^opt circuit id ( arg , … , arg ) : type ;
+    // ecdecl-circuit → pure^opt circuit id ( arg , … , arg ) : type
     ecdecl_circuit: ($) =>
       seq(
         optional(field("pure", $.pure)),
@@ -312,7 +371,6 @@ module.exports = grammar({
         ")",
         ":",
         field("type", $.type),
-        ";",
       ),
 
     // Structure-definition (struct)
@@ -331,11 +389,24 @@ module.exports = grammar({
 
     // { arg ; … ; arg ;^opt }
     _struct_body_semicolon: ($) =>
-      seq("{", repeat(seq(field("arg", $.arg), ";")), optional(";"), "}"),
+      seq(
+        "{",
+        optional(seq(field("arg", $.arg), repeat(seq(";", field("arg", $.arg))))),
+        optional(";"),
+        "}",
+      ),
 
     // { arg , … , arg ,^opt }
     _struct_body_comma: ($) =>
-      prec(1, seq("{", repeat(seq(field("arg", $.arg), ",")), optional(","), "}")),
+      prec(
+        1,
+        seq(
+          "{",
+          optional(seq(field("arg", $.arg), repeat(seq(",", field("arg", $.arg))))),
+          optional(","),
+          "}",
+        ),
+      ),
 
     // Enum-definition (enumdef)
     //
@@ -431,7 +502,6 @@ module.exports = grammar({
     stmt: ($) =>
       prec.right(
         choice(
-          $.assign_stmt,
           $.expression_sequence_stmt,
           $.return_stmt,
           $.if_stmt,
@@ -445,15 +515,15 @@ module.exports = grammar({
       assert_stmt: ($) => seq("assert", field("condition", $.expr), field("message", $.str), ";"),
       return_stmt: ($) => seq("return", optional(field("value", $.expr_seq)), ";"),
       if_stmt: ($) => prec.right(seq("if", "(", field("condition", $.expr_seq), ")", field("then_branch", $.stmt), optional(seq("else", field("else_branch", $.stmt))))),
-      for_stmt: ($) => seq("for", "(", "const", field("counter", $.id), "of", 
+      for_stmt: ($) => seq("for", "(", "const", field("counter", $.id), "of",
           choice(
-            seq(field("range_start", $.nat), "..", field("range_end", $.nat)),
+            seq(field("range_start", $.tsize), "..", field("range_end", $.tsize)),
             field("limit", $.expr_seq),
           ),
           ")", field("body", $.stmt)),
       expression_sequence_stmt: ($) => seq($.expr_seq, ";"),
-      assign_stmt: ($) => seq(field("target", $.expr), field("operator", choice("=", "-=", "+=")), field("value", $.expr), ";"),
-      const_stmt: ($) => seq("const", field("pattern", $.pattern), optional(seq(":", field("type", $.type))), "=", field("value", $.expr), ";"),
+      const_stmt: ($) => seq("const", commaSep1(field("binding", $.const_binding)), ";"),
+      const_binding: ($) => seq(field("pattern", $.pattern), optional(seq(":", field("type", $.type))), "=", field("value", $.expr)),
 
     // Pattern (pattern)
     //
@@ -483,8 +553,7 @@ module.exports = grammar({
     //
     // expr-seq → expr
     //         → expr , …¹ , expr , expr
-    expr_seq: ($) =>
-      choice(field("expr", $.expr), seq(field("expr", $.expr), repeat1(seq(",", field("expr", $.expr))), ",", field("expr", $.expr))),
+    expr_seq: ($) => commaSep1(field("expr", $.expr)),
 
     // Expression (expr)
     //
@@ -499,7 +568,21 @@ module.exports = grammar({
         field("else_branch", $.expr)
       ),
 
-    expr: ($) => choice($.conditional_expr, $._expr0),
+    expr: ($) => choice($.conditional_expr, $.assignment_expr, $._expr0),
+
+    // Assignment expression
+    //
+    // expr → expr0 = expr
+    //      → expr0 += expr
+    //      → expr0 -= expr
+    assignment_expr: ($) =>
+      prec.right(
+        seq(
+          field("left", $._expr0),
+          field("operator", choice("=", "+=", "-=")),
+          field("right", $.expr),
+        ),
+      ),
 
     // Expression0 (expr0)
     //
@@ -588,7 +671,7 @@ module.exports = grammar({
     //       → expr8 . id
     //       → expr8 . id ( expr , … , expr )
     //       → term
-    index_access_expr: ($) => prec.left(seq(field("base", $._expr8), "[", field("index", $.nat), "]")),
+    index_access_expr: ($) => prec.left(seq(field("base", $._expr8), "[", field("index", $.expr), "]")),
     member_access_expr: ($) => prec.left(seq(field("base", $._expr8), ".", field("member", $.id), optional(field("arguments", seq("(", commaSep(field("expr", $.expr)), ")"))))),
     _expr8: ($) =>
       prec.left(
@@ -618,9 +701,12 @@ module.exports = grammar({
         $.map_term, // Map function with one or more expressions
         $.fold_term, // Fold with initial value and list
         $.function_call_term, // Function call with zero or more expressions
+        $.slice_expr, // Slice with size and range expressions
         $.disclose_term, // Disclose with single expression
+        $.assert_expr, // Assert with condition and message
+        $.bytes_literal, // Bytes literal with optional spread
         $.struct_term, // Struct literal with type reference
-        seq("[", commaSep(field("expr", $.expr)), "]"), // Array literal with optional trailing comma
+        $.array_literal, // Array literal with optional spread
         $.id, // Identifier
         $.expr_seq_term, // Parenthesized expression sequence
       ),
@@ -630,7 +716,13 @@ module.exports = grammar({
       fold_term: ($) => seq("fold", "(", field("fun", $.fun), ",", field("init_value", $.expr), ",", commaSep1(field("expr", $.expr)), ")"),
       struct_term: ($) => seq(field("tref", $.tref), "{", commaSep($.struct_arg), "}"),
       function_call_term: ($) => seq(field("fun", $.fun), "(", commaSep(field("expr", $.expr)), ")"),
+      slice_expr: ($) => seq("slice", "<", field("tsize", $.tsize), ">", "(", field("expr", $.expr), ",", field("expr", $.expr), ")"),
       disclose_term : ($) => seq("disclose", "(", field("expr", $.expr), ")"),
+      assert_expr: ($) => prec(2, seq("assert", "(", field("condition", $.expr), ",", field("message", $.str), ")")),
+      array_literal: ($) => seq("[", commaSep(field("element", $.tuple_arg)), "]"),
+      bytes_literal: ($) => seq("Bytes", "[", commaSep(field("element", $.tuple_arg)), "]"),
+      tuple_arg: ($) => choice($.spread_expr, field("expr", $.expr)),
+      spread_expr: ($) => seq("...", field("expr", $.expr)),
       expr_seq_term: ($) => seq("(", $.expr_seq, ")"),
 
     // Literal (lit)
@@ -660,11 +752,10 @@ module.exports = grammar({
       choice(
         $.expr,
         $.struct_named_filed_initializer,
-        $.struct_update_field
+        $.spread_expr
     ),
 
     struct_named_filed_initializer : ($) => seq(field("id", $.id), ":", field("expr", $.expr)),
-    struct_update_field : ($) => seq("...", field("expr", $.expr)),
 
     // Function (fun)
     //
@@ -712,27 +803,38 @@ module.exports = grammar({
 
     // identifier (id, module-name, function-name, struct-name, enum-name, contract-name, tvar-name)
     //
-    // identifiers have the same syntax as Typescript identifiers
-    id: ($) => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    module_name: ($) => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    function_name: ($) => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    struct_name: ($) => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    enum_name: ($) => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    contract_name: ($) => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    tvar_name: ($) => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    // Identifiers have the same syntax as TypeScript identifiers: a Unicode
+    // letter, `_`, or `$`, followed by letters, digits, `_`, or `$`.
+    id: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
+    module_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
+    function_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
+    struct_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
+    enum_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
+    contract_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
+    tvar_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
+    type_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
 
     // field-literal (nat)
     //
     // a field literal is 0 or a natural number formed from a sequence
     // of digits starting with 1-9, e.g. 723, whose value does not exceed
     // the maximum field value
-    nat: ($) => choice("0", /[1-9][0-9]*/),
+    // Decimal, binary (0b), octal (0o), and hexadecimal (0x) field literals.
+    nat: ($) =>
+      choice(
+        "0",
+        /[1-9][0-9]*/,
+        /0[bB][01]+/,
+        /0[oO][0-7]+/,
+        /0[xX][0-9a-fA-F]+/,
+      ),
 
     // string-literal (str, file)
     //
-    // The basic string-literal rule that matches TypeScript strings
-    str: ($) => token(/"[^"]*"/),
-    file: ($) => token(/"[^"]*"/),
+    // Strings match TypeScript strings: single or double quoted, with
+    // backslash escape sequences.
+    str: ($) => token(choice(/"(?:[^"\\]|\\[\s\S])*"/, /'(?:[^'\\]|\\[\s\S])*'/)),
+    file: ($) => token(choice(/"(?:[^"\\]|\\[\s\S])*"/, /'(?:[^'\\]|\\[\s\S])*'/)),
 
     // version-literal (version)
     //

@@ -1,0 +1,36 @@
+===============
+comma separated circuits
+===============
+contract C {
+  circuit a(): Field,
+  circuit b(): Field,
+}
+---
+
+(source_file
+  (ecdecl
+    (contract_name)
+    (ecdecl_circuit
+      (id)
+      (type))
+    (ecdecl_circuit
+      (id)
+      (type))))
+
+===============
+comma separated circuits no trailing comma
+===============
+contract C {
+  circuit a(): Field, circuit b(): Field
+}
+---
+
+(source_file
+  (ecdecl
+    (contract_name)
+    (ecdecl_circuit
+      (id)
+      (type))
+    (ecdecl_circuit
+      (id)
+      (type))))

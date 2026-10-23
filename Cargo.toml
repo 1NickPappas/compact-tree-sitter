@@ -1,13 +1,13 @@
 [package]
 name = "tree-sitter-compact"
 description = "A zero-knowledge smart contract programming language"
-version = "0.1.0"
-authors = ["Lucas Rosa <lucas.rosa@shielded.io>"]
+version = "0.31.1"
+authors = ["Nick Pappas (https://github.com/1NickPappas)", "Lucas Rosa <lucas.rosa@shielded.io>"]
 license = "Apache"
 readme = "README.md"
 keywords = ["incremental", "parsing", "tree-sitter", "compact"]
 categories = ["parser-implementations", "parsing", "text-editors"]
-repository = "https://github.com/midnight-ntwrk/tree-sitter-compact"
+repository = "https://github.com/1NickPappas/compact-tree-sitter"
 edition = "2021"
 autoexamples = false
 
@@ -19,6 +19,8 @@ include = [
   "src/*",
   "tree-sitter.json",
   "LICENSE",
+  "NOTICE",
+  "README.md",
 ]
 
 [lib]

@@ -1,0 +1,393 @@
+===============
+slice expression
+===============
+circuit foo(): Field {
+  slice<8>(x, 0);
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (slice_expr
+                  (tsize
+                    (nat))
+                  (expr
+                    (term
+                      (id)))
+                  (expr
+                    (term
+                      (lit
+                        (nat)))))))))))))
+
+===============
+bytes literal
+===============
+circuit foo(): Field {
+  Bytes[1, 2, 3];
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (bytes_literal
+                  (tuple_arg
+                    (expr
+                      (term
+                        (lit
+                          (nat)))))
+                  (tuple_arg
+                    (expr
+                      (term
+                        (lit
+                          (nat)))))
+                  (tuple_arg
+                    (expr
+                      (term
+                        (lit
+                          (nat))))))))))))))
+
+===============
+bytes literal with spread
+===============
+circuit foo(): Field {
+  Bytes[...xs, 1];
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (bytes_literal
+                  (tuple_arg
+                    (spread_expr
+                      (expr
+                        (term
+                          (id)))))
+                  (tuple_arg
+                    (expr
+                      (term
+                        (lit
+                          (nat))))))))))))))
+
+===============
+assert expression
+===============
+circuit foo(): Field {
+  assert(x != 0, "boom");
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (assert_expr
+                  (expr
+                    (comparison_expr
+                      (term
+                        (id))
+                      (not_equals)
+                      (term
+                        (lit
+                          (nat)))))
+                  (str))))))))))
+
+===============
+array literal with spread
+===============
+circuit foo(): Field {
+  [a, ...rest];
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (array_literal
+                  (tuple_arg
+                    (expr
+                      (term
+                        (id))))
+                  (tuple_arg
+                    (spread_expr
+                      (expr
+                        (term
+                          (id))))))))))))))
+
+===============
+array indexing by expression
+===============
+circuit foo(): Field {
+  x[i + 1];
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (index_access_expr
+                (term
+                  (id))
+                (expr
+                  (bin_sum_expr
+                    (term
+                      (id))
+                    (term
+                      (lit
+                        (nat)))))))))))))
+
+===============
+multiple const bindings
+===============
+circuit foo(): Field {
+  const a = 1, b: Field = 2;
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (const_stmt
+          (const_binding
+            (pattern
+              (id))
+            (expr
+              (term
+                (lit
+                  (nat)))))
+          (const_binding
+            (pattern
+              (id))
+            (type)
+            (expr
+              (term
+                (lit
+                  (nat))))))))))
+
+===============
+for range with identifiers
+===============
+circuit foo(): Field {
+  for (const i of start .. end) { x = i; }
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (for_stmt
+          (id)
+          (tsize
+            (id))
+          (tsize
+            (id))
+          (stmt
+            (block
+              (stmt
+                (expression_sequence_stmt
+                  (expr_seq
+                    (expr
+                      (assignment_expr
+                        (term
+                          (id))
+                        (expr
+                          (term
+                            (id)))))))))))))))
+
+===============
+assignment expression used as an expression
+===============
+circuit foo(): Field {
+  assert((x += 2) == 3, "ok");
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (assert_expr
+                  (expr
+                    (comparison_expr
+                      (term
+                        (expr_seq_term
+                          (expr_seq
+                            (expr
+                              (assignment_expr
+                                (term
+                                  (id))
+                                (expr
+                                  (term
+                                    (lit
+                                      (nat)))))))))
+                      (equals)
+                      (term
+                        (lit
+                          (nat)))))
+                  (str))))))))))
+
+===============
+binary octal and hexadecimal literals
+===============
+circuit foo(): Field {
+  const a = 0b1010;
+  const b = 0o17;
+  const c = 0xFF;
+  const d = 0B11;
+  const e = 0X1a;
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (const_stmt
+          (const_binding
+            (pattern
+              (id))
+            (expr
+              (term
+                (lit
+                  (nat)))))))
+      (stmt
+        (const_stmt
+          (const_binding
+            (pattern
+              (id))
+            (expr
+              (term
+                (lit
+                  (nat)))))))
+      (stmt
+        (const_stmt
+          (const_binding
+            (pattern
+              (id))
+            (expr
+              (term
+                (lit
+                  (nat)))))))
+      (stmt
+        (const_stmt
+          (const_binding
+            (pattern
+              (id))
+            (expr
+              (term
+                (lit
+                  (nat)))))))
+      (stmt
+        (const_stmt
+          (const_binding
+            (pattern
+              (id))
+            (expr
+              (term
+                (lit
+                  (nat))))))))))
+
+===============
+struct with comma separated fields and no trailing comma
+===============
+struct S {
+  a: Field,
+  b: Field
+}
+---
+
+(source_file
+  (struct
+    (struct_name)
+    (arg
+      (id)
+      (type))
+    (arg
+      (id)
+      (type))))
+
+===============
+two element expression sequence in return
+===============
+circuit foo(): Field {
+  return counter += disclose(x), y;
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (return_stmt
+          (expr_seq
+            (expr
+              (assignment_expr
+                (term
+                  (id))
+                (expr
+                  (term
+                    (disclose_term
+                      (expr
+                        (term
+                          (id))))))))
+            (expr
+              (term
+                (id)))))))))

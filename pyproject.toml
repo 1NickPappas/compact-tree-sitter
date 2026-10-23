@@ -1,11 +1,11 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "tree-sitter-compact"
 description = "A zero-knowledge smart contract programming language"
-version = "0.1.0"
+version = "0.31.1"
 keywords = ["incremental", "parsing", "tree-sitter", "compact"]
 classifiers = [
   "Intended Audience :: Developers",
@@ -13,13 +13,19 @@ classifiers = [
   "Topic :: Text Processing :: Linguistic",
   "Typing :: Typed",
 ]
-authors = [{ name = "Lucas Rosa", email = "lucas.rosa@shielded.io" }]
+authors = [
+  { name = "Nick Pappas" },
+  { name = "Lucas Rosa", email = "lucas.rosa@shielded.io" },
+]
 requires-python = ">=3.10"
-license.text = "Apache"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
 readme = "README.md"
 
 [project.urls]
-Homepage = "https://github.com/midnight-ntwrk/tree-sitter-compact"
+Homepage = "https://github.com/1NickPappas/compact-tree-sitter"
+Repository = "https://github.com/1NickPappas/compact-tree-sitter"
+Issues = "https://github.com/1NickPappas/compact-tree-sitter/issues"
 
 [project.optional-dependencies]
 core = ["tree-sitter~=0.24"]

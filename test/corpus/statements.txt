@@ -5,22 +5,25 @@ circuit foo(): Bool {
     x = 42;
 }
 ---
+
 (source_file
-    (cdefn
+  (cdefn
     (function_name)
     (type
-        (tref
+      (tref
         (id)))
     (block
-        (stmt
-        (assign_stmt
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
             (expr
-            (term
-                (id)))
-            (expr
-            (term
-                (lit
-                (nat)))))))))
+              (assignment_expr
+                (term
+                  (id))
+                (expr
+                  (term
+                    (lit
+                      (nat))))))))))))
 
 ===============
 compound assignment statement
@@ -29,21 +32,24 @@ circuit foo(): Bool {
     x += y;
 }
 ---
+
 (source_file
-    (cdefn
+  (cdefn
     (function_name)
     (type
-        (tref
+      (tref
         (id)))
     (block
-        (stmt
-        (assign_stmt
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
             (expr
-            (term
-                (id)))
-            (expr
-            (term
-                (id))))))))
+              (assignment_expr
+                (term
+                  (id))
+                (expr
+                  (term
+                    (id)))))))))))
 
 ===============
 expression statement
@@ -117,33 +123,36 @@ circuit foo(): Bool {
     if (x > 0) x = 1;
 }
 ---
+
 (source_file
-    (cdefn
+  (cdefn
     (function_name)
     (type
-        (tref
+      (tref
         (id)))
     (block
-        (stmt
+      (stmt
         (if_stmt
-            (expr_seq
+          (expr_seq
             (expr
-                (rel_comparison_expr
+              (rel_comparison_expr
                 (term
-                    (id))
+                  (id))
                 (greater_than)
                 (term
-                    (lit
+                  (lit
                     (nat))))))
-            (stmt
-            (assign_stmt
+          (stmt
+            (expression_sequence_stmt
+              (expr_seq
                 (expr
-                (term
-                    (id)))
-                (expr
-                (term
-                    (lit
-                    (nat)))))))))))
+                  (assignment_expr
+                    (term
+                      (id))
+                    (expr
+                      (term
+                        (lit
+                          (nat))))))))))))))
 
 ===============
 if-else statement
@@ -152,47 +161,50 @@ circuit foo(): Bool {
     if (x > 0) { return x + 1; } else { x = 21; }
 }
 ---
+
 (source_file
-    (cdefn
+  (cdefn
     (function_name)
     (type
-        (tref
+      (tref
         (id)))
     (block
-        (stmt
+      (stmt
         (if_stmt
-            (expr_seq
+          (expr_seq
             (expr
-                (rel_comparison_expr
+              (rel_comparison_expr
                 (term
-                    (id))
+                  (id))
                 (greater_than)
                 (term
-                    (lit
+                  (lit
                     (nat))))))
-            (stmt
+          (stmt
             (block
-                (stmt
+              (stmt
                 (return_stmt
-                    (expr_seq
+                  (expr_seq
                     (expr
-                        (bin_sum_expr
+                      (bin_sum_expr
                         (term
-                            (id))
+                          (id))
                         (term
-                            (lit
+                          (lit
                             (nat))))))))))
-            (stmt
+          (stmt
             (block
-                (stmt
-                (assign_stmt
+              (stmt
+                (expression_sequence_stmt
+                  (expr_seq
                     (expr
-                    (term
-                        (id)))
-                    (expr
-                    (term
-                        (lit
-                        (nat)))))))))))))
+                      (assignment_expr
+                        (term
+                          (id))
+                        (expr
+                          (term
+                            (lit
+                              (nat))))))))))))))))
 
 ===============
 for statement
@@ -201,28 +213,33 @@ circuit foo(): Bool {
     for (const i of 0 .. 10) { x = i; }
 }
 ---
+
 (source_file
-    (cdefn
+  (cdefn
     (function_name)
     (type
-        (tref
+      (tref
         (id)))
     (block
-        (stmt
+      (stmt
         (for_stmt
-            (id)
-            (nat)
-            (nat)
-            (stmt
+          (id)
+          (tsize
+            (nat))
+          (tsize
+            (nat))
+          (stmt
             (block
-                (stmt
-                (assign_stmt
+              (stmt
+                (expression_sequence_stmt
+                  (expr_seq
                     (expr
-                    (term
-                        (id)))
-                    (expr
-                    (term
-                        (id))))))))))))
+                      (assignment_expr
+                        (term
+                          (id))
+                        (expr
+                          (term
+                            (id)))))))))))))))
 
 ===============
 assert statement with message
@@ -292,6 +309,7 @@ circuit foo(): Bool {
     (block
         (stmt
         (const_stmt
+            (const_binding
             (pattern
             (id))
             (type)
@@ -301,7 +319,7 @@ circuit foo(): Bool {
                 (id))
                 (term
                 (lit
-                    (nat))))))))))
+                    (nat)))))))))))
 
 ===============
 const declaration with destructuring pattern
@@ -319,6 +337,7 @@ circuit foo(): Bool {
     (block
         (stmt
         (const_stmt
+            (const_binding
             (pattern
             (pattern_tuple_elt
                 (pattern
@@ -330,7 +349,7 @@ circuit foo(): Bool {
             (term
                 (function_call_term
                 (fun
-                    (id))))))))))
+                    (id)))))))))))
 
 ===============
 block statement
@@ -342,25 +361,28 @@ circuit foo(): Bool {
     }
 }
 ---
+
 (source_file
-    (cdefn
+  (cdefn
     (function_name)
     (type
-        (tref
+      (tref
         (id)))
     (block
-        (stmt
+      (stmt
         (block
-            (stmt
-            (assign_stmt
+          (stmt
+            (expression_sequence_stmt
+              (expr_seq
                 (expr
-                (term
-                    (id)))
-                (expr
-                (term
-                    (lit
-                    (nat))))))
-            (stmt
+                  (assignment_expr
+                    (term
+                      (id))
+                    (expr
+                      (term
+                        (lit
+                          (nat)))))))))
+          (stmt
             (return_stmt)))))))
 
 ===============
@@ -669,15 +691,19 @@ circuit foo(): Bool {
             (expr_seq
             (expr
                 (term
-                (expr
-                    (term
-                    (id)))
-                (expr
-                    (term
-                    (id)))
-                (expr
-                    (term
-                    (id)))))))))))
+                (array_literal
+                    (tuple_arg
+                    (expr
+                        (term
+                        (id))))
+                    (tuple_arg
+                    (expr
+                        (term
+                        (id))))
+                    (tuple_arg
+                    (expr
+                        (term
+                        (id)))))))))))))
 
 ===============
 parenthesized expression sequence
@@ -995,7 +1021,10 @@ circuit foo(): Bool {
                 (index_access_expr
                 (term
                     (id))
-                (nat)))))))))
+                (expr
+                    (term
+                    (lit
+                        (nat))))))))))))
 
 ===============
 type cast expression

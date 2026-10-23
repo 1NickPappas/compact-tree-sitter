@@ -31,29 +31,32 @@ constructor (x: Field, y: Uint<32>) {
   x = 0;
 }
 ---
+
 (source_file
-    (lconstructor
+  (lconstructor
     (parg
-        (pattern
+      (pattern
         (id))
-        (type))
+      (type))
     (parg
-        (pattern
+      (pattern
         (id))
-        (type
+      (type
         (uint_type
-            (tsize
+          (tsize
             (nat)))))
     (block
-        (stmt
-        (assign_stmt
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
             (expr
-            (term
-                (id)))
-            (expr
-            (term
-                (lit
-                (nat)))))))))
+              (assignment_expr
+                (term
+                  (id))
+                (expr
+                  (term
+                    (lit
+                      (nat))))))))))))
 
 ===============
 constructor with two parameters and trailing comma
@@ -62,29 +65,32 @@ constructor (x: Field, y: Uint<32>,) {
   x = 0;
 }
 ---
+
 (source_file
-    (lconstructor
+  (lconstructor
     (parg
-        (pattern
+      (pattern
         (id))
-        (type))
+      (type))
     (parg
-        (pattern
+      (pattern
         (id))
-        (type
+      (type
         (uint_type
-            (tsize
+          (tsize
             (nat)))))
     (block
-        (stmt
-        (assign_stmt
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
             (expr
-            (term
-                (id)))
-            (expr
-            (term
-                (lit
-                (nat)))))))))
+              (assignment_expr
+                (term
+                  (id))
+                (expr
+                  (term
+                    (lit
+                      (nat))))))))))))
 
 ===============
 constructor with two parameters and a block with if statement
@@ -100,43 +106,46 @@ constructor (
   }
 }
 ---
+
 (source_file
-    (lconstructor
+  (lconstructor
     (parg
-        (pattern
+      (pattern
         (id))
-        (type))
+      (type))
     (parg
-        (pattern
+      (pattern
         (id))
-        (type
+      (type
         (uint_type
-            (tsize
+          (tsize
             (nat)))))
     (block
-        (stmt
+      (stmt
         (if_stmt
-            (expr_seq
+          (expr_seq
             (expr
-                (comparison_expr
+              (comparison_expr
                 (term
-                    (id))
+                  (id))
                 (equals)
                 (term
-                    (lit
+                  (lit
                     (nat))))))
-            (stmt
+          (stmt
             (block
-                (stmt
+              (stmt
                 (return_stmt))))
-            (stmt
+          (stmt
             (block
-                (stmt
-                (assign_stmt
+              (stmt
+                (expression_sequence_stmt
+                  (expr_seq
                     (expr
-                    (term
-                        (id)))
-                    (expr
-                    (term
-                        (lit
-                        (nat)))))))))))))
+                      (assignment_expr
+                        (term
+                          (id))
+                        (expr
+                          (term
+                            (lit
+                              (nat))))))))))))))))

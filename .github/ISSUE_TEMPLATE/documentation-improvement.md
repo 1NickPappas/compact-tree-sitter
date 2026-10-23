@@ -2,7 +2,7 @@
 name: Documentation improvement
 about: Report a problem with the documentation
 title: ""
-labels: compact-tree-sitter, public, documentation
+labels: documentation
 assignees: ""
 ---
 

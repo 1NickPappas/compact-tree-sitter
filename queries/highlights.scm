@@ -1,8 +1,9 @@
 ; This file is part of compact-tree-sitter.
 ; Copyright (C) 2025 Midnight Foundation
+; Modifications Copyright (C) 2025 Nick Pappas and compact-tree-sitter contributors
 ; SPDX-License-Identifier: Apache-2.0
 ; Licensed under the Apache License, Version 2.0 (the "License");
-; You may not use this file except in compliance with the License.
+; you may not use this file except in compliance with the License.
 ; You may obtain a copy of the License at
 ;
 ; http://www.apache.org/licenses/LICENSE-2.0
@@ -21,16 +22,20 @@
 "import" @keyword
 "export" @keyword
 "module" @keyword
+"include" @keyword
 "ledger" @keyword
 "circuit" @keyword
 "witness" @keyword
 "contract" @keyword
 "struct" @keyword
 "enum" @keyword
+"type" @keyword
+"new" @keyword
 "constructor" @keyword.function
 (pure) @keyword.modifier
 (sealed) @keyword.modifier
 "prefix" @keyword.modifier
+"from" @keyword.modifier
 "return" @keyword.return
 "if" @keyword.conditional
 "else" @keyword.conditional
@@ -41,6 +46,7 @@
 "default" @keyword
 "map" @keyword
 "fold" @keyword
+"slice" @keyword
 "disclose" @keyword
 "pad" @keyword
 
@@ -50,8 +56,8 @@
 "-=" @operator
 (equals) @operator
 (not_equals) @operator
-">" @operator
-"<" @operator
+(greater_than) @operator
+(less_than) @operator
 (greater_than_or_equal) @operator
 (less_than_or_equal) @operator
 (not) @operator
@@ -74,6 +80,7 @@
 (function_name) @function
 (struct_name) @type
 (enum_name) @type
+(type_name) @type
 (contract_name) @type
 (tvar_name) @type.parameter
 
@@ -106,17 +113,19 @@
 "<" @punctuation.bracket
 ">" @punctuation.bracket
 
-; Special Constructs
+; Declarations
 (pragma (id) @property)
 (import_name (id) @namespace)
+(import_element (id) @namespace)
+(import_element alias: (id) @namespace)
 (gargs (_) @type.parameter)
 (struct_named_filed_initializer (id) @field)
 (pattern_struct_elt (id) @field)
-(term (expr "." (id) @function.call (expr) @parameter))
 
-; Function Definitions and Calls
+; Function definitions and calls
 (cdefn (function_name) @function)
 (edecl (function_name) @function)
 (wdecl (function_name) @function)
 (ecdecl_circuit (id) @function)
 (fun (id) @function)
+(member_access_expr member: (id) @function.method)

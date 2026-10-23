@@ -1,13 +1,21 @@
 {
   "name": "tree-sitter-compact",
-  "version": "0.1.0",
+  "version": "0.31.1",
   "description": "A zero-knowledge smart contract programming language",
-  "repository": "https://github.com/midnightntwrk/compact-tree-sitter",
+  "repository": "https://github.com/1NickPappas/compact-tree-sitter",
+  "homepage": "https://github.com/1NickPappas/compact-tree-sitter#readme",
+  "bugs": "https://github.com/1NickPappas/compact-tree-sitter/issues",
   "license": "Apache",
   "author": {
-    "name": "Lucas Rosa",
-    "email": "lucas.rosa@shielded.io"
+    "name": "Nick Pappas",
+    "url": "https://github.com/1NickPappas"
   },
+  "contributors": [
+    {
+      "name": "Lucas Rosa",
+      "email": "lucas.rosa@shielded.io"
+    }
+  ],
   "main": "bindings/node",
   "types": "bindings/node",
   "keywords": [
@@ -24,7 +32,9 @@
     "bindings/node/*",
     "queries/*",
     "src/**",
-    "*.wasm"
+    "*.wasm",
+    "LICENSE",
+    "NOTICE"
   ],
   "dependencies": {
     "node-addon-api": "^8.2.1",

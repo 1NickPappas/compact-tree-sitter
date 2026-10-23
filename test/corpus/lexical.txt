@@ -1,0 +1,110 @@
+===============
+line comment
+===============
+// a line comment
+circuit foo(): Field {
+  return 1;
+}
+---
+
+(source_file
+  (comment)
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (return_stmt
+          (expr_seq
+            (expr
+              (term
+                (lit
+                  (nat))))))))))
+
+===============
+block comment
+===============
+/* a block
+   comment */
+circuit foo(): Field {
+  return 1;
+}
+---
+
+(source_file
+  (comment)
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (return_stmt
+          (expr_seq
+            (expr
+              (term
+                (lit
+                  (nat))))))))))
+
+===============
+single quoted string
+===============
+circuit foo(): Field {
+  'hello';
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (lit
+                  (str))))))))))
+
+===============
+string with escape sequences
+===============
+circuit foo(): Field {
+  "line\nbreak\t\"quoted\"";
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (lit
+                  (str))))))))))
+
+===============
+string with line continuation
+===============
+circuit foo(): Field {
+  "a should be\
+ false";
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (lit
+                  (str))))))))))

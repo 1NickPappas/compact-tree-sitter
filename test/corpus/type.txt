@@ -1,0 +1,50 @@
+===============
+simple type alias
+===============
+type Amount = Uint<64>;
+---
+
+(source_file
+  (type_decl
+    (type_name)
+    (type
+      (uint_type
+        (tsize
+          (nat))))))
+
+===============
+export new type alias with generic
+===============
+export new type Note<T> = MyStruct<T>;
+---
+
+(source_file
+  (type_decl
+    (export)
+    (type_name)
+    (gparams
+      (generic_param
+        (tvar_name)))
+    (type
+      (tref
+        (id)
+        (gargs
+          (garg
+            (type
+              (tref
+                (id)))))))))
+
+===============
+export type alias
+===============
+export type Id = Bytes<32>;
+---
+
+(source_file
+  (type_decl
+    (export)
+    (type_name)
+    (type
+      (bytes_type
+        (tsize
+          (nat))))))

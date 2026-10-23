@@ -1,0 +1,90 @@
+===============
+dollar sign identifier
+===============
+import M prefix $;
+---
+
+(source_file
+  (idecl
+    (import_name
+      (id))
+    (prefix
+      (id))))
+
+===============
+dollar sign in identifier
+===============
+import N<248> prefix m$;
+---
+
+(source_file
+  (idecl
+    (import_name
+      (id))
+    (gargs
+      (garg
+        (nat)))
+    (prefix
+      (id))))
+
+===============
+unicode identifier as circuit name
+===============
+export circuit 日本(): Field { return x; }
+---
+
+(source_file
+  (cdefn
+    (export)
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (return_stmt
+          (expr_seq
+            (expr
+              (term
+                (id)))))))))
+
+===============
+unicode identifier as ledger name
+===============
+export sealed ledger EsRdOЃ: Field;
+---
+
+(source_file
+  (ldecl
+    (export)
+    (sealed)
+    (id)
+    (type)))
+
+===============
+unicode identifier as variable
+===============
+circuit foo(): Field {
+  const 갖 = 0o17;
+  return 갖;
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (const_stmt
+          (const_binding
+            (pattern
+              (id))
+            (expr
+              (term
+                (lit
+                  (nat)))))))
+      (stmt
+        (return_stmt
+          (expr_seq
+            (expr
+              (term
+                (id)))))))))

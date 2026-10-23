@@ -1,0 +1,99 @@
+===============
+import selection from file
+===============
+import { foo, bar } from "./module";
+---
+
+(source_file
+  (idecl
+    (import_selection
+      (import_element
+        (id))
+      (import_element
+        (id)))
+    (import_name
+      (file))))
+
+===============
+import selection with alias
+===============
+import { foo as f, bar as b } from "./module";
+---
+
+(source_file
+  (idecl
+    (import_selection
+      (import_element
+        (id)
+        (id))
+      (import_element
+        (id)
+        (id)))
+    (import_name
+      (file))))
+
+===============
+import selection with trailing comma
+===============
+import { foo, bar, } from "./module";
+---
+
+(source_file
+  (idecl
+    (import_selection
+      (import_element
+        (id))
+      (import_element
+        (id)))
+    (import_name
+      (file))))
+
+===============
+import selection with prefix
+===============
+import { a, b as c } from myModule prefix helpers;
+---
+
+(source_file
+  (idecl
+    (import_selection
+      (import_element
+        (id))
+      (import_element
+        (id)
+        (id)))
+    (import_name
+      (id))
+    (prefix
+      (id))))
+
+===============
+import selection with generic arguments
+===============
+import { thing } from myModule<42, Field>;
+---
+
+(source_file
+  (idecl
+    (import_selection
+      (import_element
+        (id)))
+    (import_name
+      (id))
+    (gargs
+      (garg
+        (nat))
+      (garg
+        (type)))))
+
+===============
+empty import selection
+===============
+import {} from CompactStandardLibrary;
+---
+
+(source_file
+  (idecl
+    (import_selection)
+    (import_name
+      (id))))

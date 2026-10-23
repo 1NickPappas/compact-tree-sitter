@@ -8,7 +8,7 @@ on:
     branches: [main]
   workflow_dispatch: {}   # so you can still run it manually
   schedule:
-    - cron: '0 0 * * *'   # run daily at midnight UTC
+    - cron: '0 0 * * *'   # run daily at 00:00 UTC
 concurrency:
   group:
     ${{ github.event_name != 'merge_group' && format('{0}-{1}', github.workflow, github.head_ref) || github.run_id }}
@@ -24,7 +24,17 @@ jobs:
       statuses: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  #v6.0.1
+        uses: actions/checkout@v6
 
-      - name: Scan code
-        uses: midnightntwrk/upload-sarif-github-action@07dad711370cc5985885ebcf07cb8c9264bc4167
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scanners: vuln,secret,misconfig
+          format: sarif
+          output: trivy-results.sarif
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
