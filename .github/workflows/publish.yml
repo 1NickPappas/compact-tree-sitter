@@ -26,17 +26,56 @@ permissions:
   attestations: write
 
 jobs:
+  verify:
+    name: Verify tag and parser
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # A tag push must match the crate version (tag vX.Y.Z ↔ Cargo.toml X.Y.Z).
+      - name: Check tag matches the crate version
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          version="$(sed -nE 's/^version = "([^"]+)".*/\1/p' Cargo.toml | head -1)"
+          if [ "v$version" != "${GITHUB_REF_NAME}" ]; then
+            echo "::error::tag ${GITHUB_REF_NAME} does not match Cargo.toml version v$version"
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --omit peer --omit optional
+
+      # The published crate compiles the committed parser.c, so it must be in
+      # sync with grammar.js (an earlier release shipped stale generated files).
+      - name: Check the generated parser is up to date
+        run: |
+          npm run generate
+          git diff --exit-code src/
+
+      - name: Run tree-sitter tests
+        run: npm run test
+
   github:
+    needs: verify
     if: ${{ github.event_name == 'push' || inputs.skip-github-release != true }}
     name: GitHub release
     uses: tree-sitter/workflows/.github/workflows/release.yml@main
 
   crates:
+    needs: verify
     if: ${{ github.event_name == 'push' || inputs.skip-crates != true }}
     name: crates.io
     uses: tree-sitter/workflows/.github/workflows/package-crates.yml@main
     with:
       package-name: tree-sitter-compact
+      generate: true
     secrets:
       CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
@@ -44,6 +83,7 @@ jobs:
   # why we do not use the reusable package-npm workflow).
 
   pypi:
+    needs: verify
     if: ${{ github.event_name == 'push' || inputs.skip-pypi != true }}
     name: PyPI
     uses: tree-sitter/workflows/.github/workflows/package-pypi.yml@main
