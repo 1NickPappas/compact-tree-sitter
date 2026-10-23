@@ -1,0 +1,118 @@
+===============
+primitive and compound types
+===============
+ledger a: Boolean;
+ledger b: Field;
+ledger c: Uint<32>;
+ledger d: Uint<0..64>;
+ledger e: Bytes<32>;
+ledger f: Vector<10, Field>;
+ledger g: [Boolean, Field];
+ledger h: [Field, Field,];
+---
+
+(source_file
+  (ldecl
+    (id)
+    (type))
+  (ldecl
+    (id)
+    (type))
+  (ldecl
+    (id)
+    (type
+      (uint_type
+        (tsize
+          (nat)))))
+  (ldecl
+    (id)
+    (type
+      (uint_type
+        (tsize
+          (nat))
+        (tsize
+          (nat)))))
+  (ldecl
+    (id)
+    (type
+      (bytes_type
+        (tsize
+          (nat)))))
+  (ldecl
+    (id)
+    (type
+      (vector_type
+        (tsize
+          (nat))
+        (type))))
+  (ldecl
+    (id)
+    (type
+      (type)
+      (type)))
+  (ldecl
+    (id)
+    (type
+      (type)
+      (type))))
+
+===============
+opaque type
+===============
+ledger data: Opaque<"Uint8Array">;
+witness w(x: Opaque<"string">): Opaque<"string">;
+---
+
+(source_file
+  (ldecl
+    (id)
+    (type
+      (opaque_type
+        (str))))
+  (wdecl
+    (function_name)
+    (arg
+      (id)
+      (type
+        (opaque_type
+          (str))))
+    (type
+      (opaque_type
+        (str)))))
+
+===============
+unit and nested array types
+===============
+circuit f(): [] { return []; }
+circuit g(x: [[Field]]): [[Field]] { return x; }
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (return_stmt
+          (expr_seq
+            (expr
+              (term
+                (array_literal))))))))
+  (cdefn
+    (function_name)
+    (parg
+      (pattern
+        (id))
+      (type
+        (type
+          (type))))
+    (type
+      (type
+        (type)))
+    (block
+      (stmt
+        (return_stmt
+          (expr_seq
+            (expr
+              (term
+                (id)))))))))

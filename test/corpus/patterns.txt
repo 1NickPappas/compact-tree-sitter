@@ -1,0 +1,122 @@
+===============
+struct destructuring pattern
+===============
+circuit foo(): Field {
+  const { a, b: c } = s;
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (const_stmt
+          (const_binding
+            (pattern
+              (pattern_struct_elt
+                (id))
+              (pattern_struct_elt
+                (id)
+                (pattern
+                  (id))))
+            (expr
+              (term
+                (id)))))))))
+
+===============
+tuple destructuring pattern
+===============
+circuit foo(): Field {
+  const [a, b] = pair;
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (const_stmt
+          (const_binding
+            (pattern
+              (pattern_tuple_elt
+                (pattern
+                  (id)))
+              (pattern_tuple_elt
+                (pattern
+                  (id))))
+            (expr
+              (term
+                (id)))))))))
+
+===============
+nested destructuring pattern
+===============
+circuit foo(): Field {
+  const { x: [p, q], y } = s;
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (const_stmt
+          (const_binding
+            (pattern
+              (pattern_struct_elt
+                (id)
+                (pattern
+                  (pattern_tuple_elt
+                    (pattern
+                      (id)))
+                  (pattern_tuple_elt
+                    (pattern
+                      (id)))))
+              (pattern_struct_elt
+                (id)))
+            (expr
+              (term
+                (id)))))))))
+
+===============
+arrow function with optional and typed parameters
+===============
+circuit foo(): Field {
+  map((a, b: Field): Field => a + b, xs);
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (map_term
+                  (fun
+                    (pattern
+                      (id))
+                    (parg
+                      (pattern
+                        (id))
+                      (type))
+                    (type)
+                    (expr
+                      (bin_sum_expr
+                        (term
+                          (id))
+                        (term
+                          (id)))))
+                  (expr
+                    (term
+                      (id))))))))))))

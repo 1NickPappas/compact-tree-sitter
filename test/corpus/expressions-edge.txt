@@ -1,0 +1,169 @@
+===============
+compound assignment as an expression
+===============
+circuit foo(): Field {
+  assert((counter -= 1) == 0, "empty");
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (assert_expr
+                  (expr
+                    (comparison_expr
+                      (term
+                        (expr_seq_term
+                          (expr_seq
+                            (expr
+                              (assignment_expr
+                                (term
+                                  (id))
+                                (expr
+                                  (term
+                                    (lit
+                                      (nat)))))))))
+                      (equals)
+                      (term
+                        (lit
+                          (nat)))))
+                  (str))))))))))
+
+===============
+chained assignment expression
+===============
+circuit foo(): Field {
+  a = b = c;
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (assignment_expr
+                (term
+                  (id))
+                (expr
+                  (assignment_expr
+                    (term
+                      (id))
+                    (expr
+                      (term
+                        (id)))))))))))))
+
+===============
+slice with identifier size
+===============
+circuit foo(): Field {
+  slice<n>(v, 0);
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (slice_expr
+                  (tsize
+                    (id))
+                  (expr
+                    (term
+                      (id)))
+                  (expr
+                    (term
+                      (lit
+                        (nat)))))))))))))
+
+===============
+uint range with identifier bound
+===============
+ledger x: Uint<0..n>;
+---
+
+(source_file
+  (ldecl
+    (id)
+    (type
+      (uint_type
+        (tsize
+          (nat))
+        (tsize
+          (id))))))
+
+===============
+for over expression sequence limit
+===============
+circuit foo(): Field {
+  for (const i of f(), g()) { x = i; }
+}
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (for_stmt
+          (id)
+          (expr_seq
+            (expr
+              (term
+                (function_call_term
+                  (fun
+                    (id)))))
+            (expr
+              (term
+                (function_call_term
+                  (fun
+                    (id))))))
+          (stmt
+            (block
+              (stmt
+                (expression_sequence_stmt
+                  (expr_seq
+                    (expr
+                      (assignment_expr
+                        (term
+                          (id))
+                        (expr
+                          (term
+                            (id)))))))))))))))
+
+===============
+external contract semicolon separated without trailing semicolon
+===============
+contract C {
+  circuit a(): Field;
+  circuit b(): Field
+}
+---
+
+(source_file
+  (ecdecl
+    (contract_name)
+    (ecdecl_circuit
+      (id)
+      (type))
+    (ecdecl_circuit
+      (id)
+      (type))))

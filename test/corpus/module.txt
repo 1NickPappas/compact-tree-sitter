@@ -1,0 +1,60 @@
+===============
+empty module
+===============
+module M {
+}
+---
+
+(source_file
+  (mdefn
+    (module_name)))
+
+===============
+module with generic parameter
+===============
+module Math<#n> {
+  export circuit add(a: Field): Field { return a; }
+}
+---
+
+(source_file
+  (mdefn
+    (module_name)
+    (gparams
+      (generic_param
+        (tvar_name)))
+    (cdefn
+      (export)
+      (function_name)
+      (parg
+        (pattern
+          (id))
+        (type))
+      (type)
+      (block
+        (stmt
+          (return_stmt
+            (expr_seq
+              (expr
+                (term
+                  (id))))))))))
+
+===============
+exported nested module
+===============
+export module Outer {
+  module Inner {
+    ledger x: Field;
+  }
+}
+---
+
+(source_file
+  (mdefn
+    (export)
+    (module_name)
+    (mdefn
+      (module_name)
+      (ldecl
+        (id)
+        (type)))))
