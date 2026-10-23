@@ -6,9 +6,11 @@
       "camelcase": "Compact",
       "title": "Compact",
       "scope": "source.compact",
+      "path": ".",
       "file-types": [
         "compact"
       ],
+      "highlights": "queries/highlights.scm",
       "injection-regex": "^compact$",
       "class-name": "TreeSitterCompact"
     }

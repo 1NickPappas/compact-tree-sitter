@@ -27,5 +27,13 @@ jobs:
         run: |
           bun install
 
+      - name: 🧹 Run ESLint
+        run: bun run lint
+
       - name: 🧪 Run tree-sitter tests
         run: bun run test
+
+      - name: 🧱 Verify the parser is up to date
+        run: |
+          bun run generate
+          git diff --exit-code src/
