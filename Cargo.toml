@@ -1,7 +1,7 @@
 [package]
 name = "tree-sitter-compact"
 description = "A zero-knowledge smart contract programming language"
-version = "0.31.1"
+version = "0.1.0"
 authors = ["Nick Pappas (https://github.com/1NickPappas)", "Lucas Rosa <lucas.rosa@shielded.io>"]
 license = "Apache"
 readme = "README.md"
@@ -34,3 +34,8 @@ cc = "1.2"
 
 [dev-dependencies]
 tree-sitter = "0.25.8"
+
+[package.metadata.compact]
+language = "0.23.0"
+toolchain = "0.31.1"
+runtime = "0.16.0"

@@ -4,7 +4,7 @@ endif
 
 LANGUAGE_NAME := tree-sitter-compact
 HOMEPAGE_URL := https://github.com/1NickPappas/compact-tree-sitter
-VERSION := 0.31.1
+VERSION := 0.1.0
 
 # repository
 SRC_DIR := src

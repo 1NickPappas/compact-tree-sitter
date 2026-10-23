@@ -37,11 +37,15 @@ automated guarantee that invalid Compact is rejected. Add a small harness:
 
 - [ ] Create the GitHub repo `1NickPappas/compact-tree-sitter` and push.
 - [ ] Add secrets: `NPM_TOKEN`, `CARGO_REGISTRY_TOKEN`, `PYPI_API_TOKEN`.
-- [ ] Push tag `v0.31.1` to trigger the publish workflow.
+- [ ] Push tag `v0.1.0` to trigger the publish workflow.
 
 ## Tracking a moving language target
 
-- [ ] Track Compact toolchain releases and update the grammar + corpus when the
+- [x] Track Compact toolchain releases and update the grammar + corpus when the
       language version bumps (current target: toolchain 0.31.1 / language
       0.23.0 / runtime 0.16.0).
-- [ ] Add a doc note mapping grammar releases to Compact versions.
+- [x] Document the versioning policy: independent SemVer for the grammar with a
+      README compatibility table and package metadata (`compact.language`,
+      `compact.toolchain`).
+- [ ] On each Compact language release, bump the grammar minor/major per the
+      README table and record the new supported version.

@@ -12,9 +12,18 @@ based on the [formal grammar][grammar] published by the Midnight Foundation.
 
 ## Compatibility
 
-This release targets Compact **toolchain 0.31.1** (language **0.23.0**,
+This release supports Compact **language 0.23.0** (toolchain **0.31.1**,
 runtime **0.16.0**), the version supported on Midnight mainnet. See the
 [compatibility matrix][support-matrix] for details.
+
+| Grammar | Compact language | Compact toolchain |
+|---------|------------------|-------------------|
+| 0.1.x   | 0.23.0           | 0.31.1            |
+
+The grammar follows independent [Semantic Versioning][semver]: the parse tree
+is the public API, so adding nodes or fields is a minor release and breaking
+tree changes are major. The supported Compact version is tracked in this table
+and in the package metadata, not in the grammar version.
 
 ## Fork
 
@@ -51,7 +60,7 @@ parser.setLanguage(Compact);
 ```toml
 [dependencies]
 tree-sitter = "0.25"
-tree-sitter-compact = "0.31.1"
+tree-sitter-compact = "0.1"
 ```
 
 ### Python
@@ -73,6 +82,7 @@ import tree_sitter_compact
 [compact]: https://docs.midnight.network/develop/reference/compact/lang-ref
 [grammar]: https://docs.midnight.network/develop/reference/compact/compact-grammar
 [support-matrix]: https://docs.midnight.network/relnotes/support-matrix
+[semver]: https://semver.org/spec/v2.0.0.html
 [upstream]: https://github.com/midnightntwrk/compact-tree-sitter
 
 [ci]: https://img.shields.io/github/actions/workflow/status/1NickPappas/compact-tree-sitter/tests.yml?logo=github&label=CI
