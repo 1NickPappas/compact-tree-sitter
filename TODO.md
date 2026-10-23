@@ -5,7 +5,9 @@ Working list for `compact-tree-sitter`. Check items off as they land.
 ## Negative tests (must-fail cases)
 
 tree-sitter corpus tests only assert successful parses, so we currently have no
-automated guarantee that invalid Compact is rejected. Add a small harness:
+automated guarantee that invalid Compact is rejected. `scripts/conformance.sh`
+now locks the expected-failure set (regression gate), but an explicit
+must-fail harness is still wanted:
 
 - [ ] Add `test/negative/` with one `.compact` file per invalid construct
       (e.g. `experimental/reserved/`-style keywords, bad separators, malformed
@@ -35,11 +37,31 @@ automated guarantee that invalid Compact is rejected. Add a small harness:
 
 ## Release follow-ups
 
-- [ ] Create the GitHub repo `1NickPappas/compact-tree-sitter` and push.
-- [ ] Add secret `CARGO_REGISTRY_TOKEN` (crates.io only for now).
-- [ ] Push tag `v0.1.0` to trigger the publish workflow.
+- [x] Create the GitHub repo `1NickPappas/compact-tree-sitter` and push.
+- [x] Add secret `CARGO_REGISTRY_TOKEN` (crates.io only for now).
+- [x] Push tag `v0.1.0` to trigger the publish workflow (crate published).
 - [ ] Later: enable npm/PyPI in `.github/workflows/publish.yml` and add
       `NPM_TOKEN` / `PYPI_API_TOKEN`.
+
+## 0.2.0 consolidation (compiler-aligned grammar)
+
+Target: a 0.2.0 that is at least as accurate as 0.1.0, uses compiler-aligned
+node names, drops legacy constructs, and is gated by the conformance harness.
+See the investigation notes: the WIP branch `feat/grammar-v0.30.0` targets the
+0.30.0 language and is *not* authoritative; the compiler is.
+
+- [x] Phase 0 — measuring sticks:
+      `scripts/grammar-delta.sh` (compiler grammar diff between tags) and
+      `scripts/conformance.sh` (parse the whole compiler corpus, baseline).
+- [ ] Phase 1 — rename nodes to compiler names and fix the
+      `struct_named_filed_initializer` typo; re-run the conformance gate.
+- [ ] Phase 2 — decide on legacy `edecl` / `assert_stmt` (drop for strict
+      0.31.1, or keep as a superset) and act.
+- [ ] Phase 3 — port the WIP branch corpus tests as *candidate inputs*,
+      validating each against the 0.31.1 parser before keeping.
+- [ ] Phase 4 — cut and publish 0.2.0 (breaking node renames).
+- [ ] Optional: advertise `0.22.x–0.23.0` language support after verifying
+      the near-identical 0.30.0 grammar passes the conformance gate.
 
 ## Tracking a moving language target
 

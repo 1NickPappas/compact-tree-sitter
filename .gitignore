@@ -47,3 +47,9 @@ zig-out/
 *.zip
 Cargo.lock
 package-lock.json
+
+# Conformance/delta caches
+.cache/
+parser.so
+parser.dylib
+parser.dll
