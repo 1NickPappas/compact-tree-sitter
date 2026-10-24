@@ -42,6 +42,31 @@ must-fail harness is still wanted:
 - [ ] Optional: add `queries/tags.scm` and/or `queries/injections.scm` if
       editors need them, and register them in `tree-sitter.json`.
 
+## Build toolchain (tree-sitter generator)
+
+The tree-sitter CLI is a **build tool whose output we commit**
+(`src/parser.c`, `grammar.json`, `node-types.json`). It is pinned to the exact
+version that produced the committed files (`tree-sitter-cli` 0.26.13, i.e. the
+newest 0.26.x patch). Do not chase `latest` — the generated output is not stable
+across versions, so a mismatch breaks the "generated parser is current" CI check
+and `cargo publish`. Upgrade deliberately, with a reason or on a slow cadence.
+
+- [ ] Bump the generator when warranted (e.g. 0.26.13 -> 0.27.x). Steps:
+      update `tree-sitter-cli` in `package.json`, `npm install`, `npm run
+      generate` and commit `src/`, run `npm run lint`/`npm run test` and
+      `./scripts/conformance.sh <tag>` for **every** supported tag, and move the
+      pinned `tree-sitter-ref` in `tests.yml` and `conformance.yml` to match.
+      Confirm `#define LANGUAGE_VERSION` is still 15 (or bump the runtime
+      requirements if the ABI changed).
+- [ ] Guard automation: Renovate is enabled and will open npm PRs; a
+      `tree-sitter-cli` bump PR fails CI because the regenerated `src/` no
+      longer matches the committed file. Ignore `tree-sitter-cli` in
+      `renovate.json` (a `packageRules` `matchPackageNames` ignore), or adopt the
+      upstream `tree-sitter/workflows/.github/workflows/regenerate.yml`
+      workflow to auto-regenerate on those PRs.
+- [ ] Optional: adopt the upstream `regenerate.yml` reusable workflow so the
+      generator and `src/` stay in lockstep automatically.
+
 ## Release follow-ups
 
 - [x] Create the GitHub repo `1NickPappas/compact-tree-sitter` and push.
