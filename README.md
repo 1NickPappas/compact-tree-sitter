@@ -12,17 +12,26 @@ based on the [formal grammar][grammar] published by the Midnight Foundation.
 
 ## Compatibility
 
-This grammar targets Compact **language 0.23.0** and newer (toolchain
-**0.31.1** and newer, runtime **0.16.0**), the version supported on Midnight
-mainnet. Support starts at **0.31.1**: the grammar accepts the language as
-defined by that toolchain and no longer accepts legacy syntax such as top-level
-body-less `circuit` declarations or the old `assert expr "msg";` statement.
-See the [compatibility matrix][support-matrix] for details.
+This grammar is a single **superset** grammar that accepts the Compact language
+across all currently supported toolchains — from **0.31.1** (language 0.23.0,
+runtime 0.16.0), the version on the current Midnight mainnet (ledger 8), through
+**0.35.0** (language 0.27.0, runtime 0.20.0), which targets ledger 9.
 
-| Grammar | Compact language | Compact toolchain |
-|---------|------------------|-------------------|
-| 0.2.x   | 0.23.0           | 0.31.1            |
-| 0.1.x   | 0.23.0           | 0.31.1            |
+Support starts at **0.31.1**: the grammar does not accept legacy syntax such as
+top-level body-less `circuit` declarations or the old `assert expr "msg";`
+statement.
+
+| Grammar | Compact language | Compact toolchain | Runtime         | Ledger |
+|---------|------------------|-------------------|-----------------|--------|
+| 0.3.x   | 0.23.0 – 0.27.0  | 0.31.1 – 0.35.0   | 0.16.0 – 0.20.0 | 8, 9   |
+| 0.2.x   | 0.23.0           | 0.31.1            | 0.16.0          | 8      |
+| 0.1.x   | 0.23.0           | 0.31.1            | 0.16.0          | 8      |
+
+The grammar is version-agnostic: it does **not** evaluate `pragma
+language_version` and accepts the union of supported syntax. Use the Compact
+compiler to enforce the language version; the grammar is intended for parsing,
+highlighting, and editor tooling. See [COMPATIBILITY.md](COMPATIBILITY.md) for
+the full mapping and release/versioning policy.
 
 The grammar follows independent [Semantic Versioning][semver]: the parse tree
 is the public API, so adding nodes or fields is a minor release and breaking
@@ -69,7 +78,7 @@ parser.setLanguage(Compact);
 ```toml
 [dependencies]
 tree-sitter = "0.25"
-tree-sitter-compact = "0.1"
+tree-sitter-compact = "0.3"
 ```
 
 ### Python

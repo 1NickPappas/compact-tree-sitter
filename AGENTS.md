@@ -20,15 +20,21 @@ the maintained one.
 
 ### Supported Compact version
 
-| Grammar | Compact language | Compact toolchain | Runtime |
-|---------|------------------|-------------------|---------|
-| 0.2.x   | 0.23.0           | 0.31.1            | 0.16.0  |
-| 0.1.x   | 0.23.0           | 0.31.1            | 0.16.0  |
+| Grammar | Compact language | Compact toolchain | Runtime         |
+|---------|------------------|-------------------|-----------------|
+| 0.3.x   | 0.23.0 – 0.27.0  | 0.31.1 – 0.35.0   | 0.16.0 – 0.20.0 |
+| 0.2.x   | 0.23.0           | 0.31.1            | 0.16.0          |
+| 0.1.x   | 0.23.0           | 0.31.1            | 0.16.0          |
 
-Support **starts at toolchain 0.31.1** — the version on Midnight mainnet. The
-grammar is strict: legacy syntax (top-level body-less `circuit` declarations,
-the old `assert expr "msg";` statement) is intentionally **not** accepted. Do
-not "helpfully" re-add legacy forms.
+Support **starts at toolchain 0.31.1**. The grammar is a single **superset**
+covering every supported toolchain, so one release serves ledger 8 (mainnet
+today) and ledger 9 (upcoming). Legacy syntax (top-level body-less `circuit`
+declarations, the old `assert expr "msg";` statement) is intentionally **not**
+accepted. Do not "helpfully" re-add legacy forms.
+
+Tree-sitter does **not** evaluate `pragma language_version` — the grammar accepts
+the union of supported syntax and the Compact compiler enforces the version. See
+`COMPATIBILITY.md`.
 
 ### Versioning policy (important)
 
@@ -66,13 +72,17 @@ files than that branch (355/384 vs 350/384) and failed nothing it passed.
 | `src/parser.c`, `src/grammar.json`, `src/node-types.json` | Generated; commit them |
 | `test/corpus/*.txt` | Corpus tests (must all pass) |
 | `queries/highlights.scm` | Syntax highlighting query |
-| `scripts/compact-version.txt` | Pinned compiler tag (`compactc-v0.31.1`) |
-| `scripts/conformance.sh` | Parse the whole compiler corpus; regression gate |
-| `scripts/conformance-baseline.txt` | Expected-failure list (19 entries) |
+| `scripts/compact-version.txt` | Default/pinned compiler tag (`compactc-v0.35.0`) |
+| `scripts/supported-versions.txt` | All supported compiler tags; drives the conformance matrix |
+| `scripts/conformance.sh` | Parse a compiler corpus; per-tag regression gate |
+| `scripts/conformance-baseline-<tag>.txt` | Expected-failure list, one per compiler tag |
 | `scripts/grammar-delta.sh` | Diff the language grammar between two compiler tags |
+| `COMPATIBILITY.md` | Grammar→toolchain→network mapping and versioning policy |
+| `RELEASING.md` | Branch/tag/staging conventions and the release process |
 | `.github/workflows/tests.yml` | Official tree-sitter parser + binding tests (Rust/Python/Go/Swift) |
 | `.github/workflows/lint.yml` | ESLint (`eslint-config-treesitter`) |
-| `.github/workflows/conformance.yml` | Conformance gate (push/PR/weekly) |
+| `.github/workflows/conformance.yml` | Conformance matrix over all supported tags (push/PR/weekly) |
+| `.github/workflows/watch-compact.yml` | Weekly check for new compiler releases; opens an issue |
 | `.github/workflows/publish.yml` | GitHub release + crates.io + PyPI |
 | `.github/workflows/publish-npm.yml` | npm (dedicated; see gotchas) |
 | `.github/workflows/scan.yaml` | Trivy vulnerability/secret scan |
@@ -95,12 +105,12 @@ committed; CI fails if `src/` is stale (`git diff --exit-code src/`).
 
 1. Edit `grammar.js`.
 2. Add/update corpus tests in `test/corpus/`. Every grammar change needs tests;
-   new syntax gets a new fixture file (see the `*-0.31.1.txt` naming used for
+   new syntax gets a new fixture file (see the `release-*.txt` naming used for
    version-specific coverage).
 3. `npm run generate` and commit `src/`.
 4. `npm run lint`, `npm run test`, `./scripts/conformance.sh`.
 5. If a conformance file now parses that did not before, remove it from
-   `scripts/conformance-baseline.txt` (the script prints these as "fixed").
+   `scripts/conformance-baseline-<tag>.txt` (the script prints these as "fixed").
    If a file that used to parse now fails, that is a **regression** — fix the
    grammar or explicitly justify a baseline addition in the PR.
 6. Update `CHANGELOG.md` and bump the version per the policy above if this is a
@@ -111,11 +121,14 @@ committed; CI fails if `src/` is stale (`git diff --exit-code src/`).
 1. Run `./scripts/grammar-delta.sh <old-tag> <new-tag>` to see production names,
    keyword groups, grammar-reference productions, and lexer changes.
 2. Update the grammar for the new syntax; add corpus tests.
-3. Bump `scripts/compact-version.txt` to the new tag.
-4. Run `./scripts/conformance.sh` (it fetches the new corpus). Refresh the
-   baseline only for genuinely-invalid upstream files, never to hide regressions.
-5. Update the README compatibility table and package metadata; add a CHANGELOG
-   entry. Bump the grammar version per the SemVer policy.
+3. Add the tag to `scripts/supported-versions.txt`, set
+   `scripts/compact-version.txt` to it, and run
+   `./scripts/conformance.sh <tag> --update-baseline`. Refresh the baseline only
+   for genuinely-invalid upstream files, never to hide regressions.
+4. Run `./scripts/conformance.sh <tag>` for **every** supported tag and confirm
+   all pass (this is what the CI conformance matrix does).
+5. Update the metadata ranges, README/`COMPATIBILITY.md`, and CHANGELOG; bump the
+   grammar version per the SemVer policy. See `RELEASING.md` for the full flow.
 
 ## Workflow: releasing
 
@@ -129,8 +142,11 @@ release missed `CMakeLists.txt`):
 - `Makefile` (`VERSION :=`)
 - `CMakeLists.txt` (`project(... VERSION ...)`)
 
-Sanity check: `git grep -n '0\.2\.0' -- . ':!package-lock.json' ':!test' ':!*.md'`
-should list only those six.
+Sanity check: `git grep -n '0\.3\.0' -- . ':!package-lock.json' ':!test' ':!*.md' ':!scripts'`
+should list only those six. Note the version is also embedded in
+`src/parser.c` — run `npm run generate` after bumping.
+
+See `RELEASING.md` for the full staging/promotion flow.
 
 Then:
 
@@ -138,7 +154,9 @@ Then:
 2. Commit, tag `vX.Y.Z`, push the tag. The tag **must** equal `Cargo.toml`'s
    version or the publish workflow's verify job fails.
 3. Tag pushes run `publish.yml` (GitHub release, crates.io, PyPI) and
-   `publish-npm.yml` (npm).
+   `publish-npm.yml` (npm). A `vX.Y.Z-rc.N` tag publishes a pre-release: npm
+   goes to the `next` dist-tag and PyPI/crates publish pre-releases. See
+   `RELEASING.md`.
 4. To publish a single registry for an already-tagged version, dispatch
    manually:
 
@@ -149,16 +167,16 @@ Then:
    ```
 
 Registry versions are **immutable** — you cannot republish a version. Bump and
-re-tag instead. `0.1.0` and `0.2.0` are already published on all three.
+re-tag instead. `0.1.0`, `0.2.0`, and `0.3.0` are published on all three.
 
 ## Verification gates
 
 | Gate | Command | Must be |
 |------|---------|---------|
-| Corpus tests | `npm run test` | 147/147 (grows with new tests) |
+| Corpus tests | `npm run test` | 154/154 (grows with new tests) |
 | Lint | `npm run lint` | clean |
 | Generated files | `npm run generate && git diff --exit-code src/` | no diff |
-| Conformance | `./scripts/conformance.sh` | "conformance OK" |
+| Conformance | `./scripts/conformance.sh <tag>` for each supported tag | "conformance OK" |
 | Node types | named types in `src/node-types.json` | all reachable/covered |
 
 ## Gotchas (learned the hard way — do not rediscover)
@@ -174,6 +192,9 @@ re-tag instead. `0.1.0` and `0.2.0` are already published on all three.
   parsers by language name at `~/.cache/tree-sitter/lib/compact.dylib`. The WIP
   branch also uses the name `compact`, so a stale cache can mask changes.
   `rm -rf ~/.cache/tree-sitter/lib` when results look impossible.
+- Baselines are **per compiler tag** (`scripts/conformance-baseline-<tag>.txt`),
+  so a multi-version matrix can check each line against its own set. The list of
+  tags is `scripts/supported-versions.txt`.
 - The script excludes intentionally-invalid trees (`negative`, `failing`,
   `errors`, `reserved`, `invalid`, `reject`, `_error.compact`). Keep those
   exclusions when adding fixtures.
@@ -227,6 +248,12 @@ re-tag instead. `0.1.0` and `0.2.0` are already published on all three.
 - `eslint` lives in `lint.yml` because `parser-test-action` does not lint.
 - `tree-sitter-ref` values starting with `v` download a prebuilt CLI release
   (fast); anything else is built from source with Cargo.
+- `conformance.yml` reads `scripts/supported-versions.txt` and runs the gate for
+  every supported tag (one matrix job each). `watch-compact.yml` runs weekly,
+  compares the latest stable compiler tag to the highest supported one, and opens
+  a tracking issue with the grammar delta when there is a newer one.
+- `publish-npm.yml` takes a `dist-tag` input; tag pushes containing `-` publish
+  under `next` automatically (pre-releases).
 
 ### Swift binding
 

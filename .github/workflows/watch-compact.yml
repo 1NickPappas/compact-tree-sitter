@@ -1,0 +1,76 @@
+name: Watch Compact releases
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # weekly on Monday, 06:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+# Open (or update) a tracking issue when the compiler repo publishes a stable
+# toolchain newer than the highest supported one. That issue is the trigger to
+# start the staging workflow in RELEASING.md.
+jobs:
+  watch:
+    name: Check for a newer Compact toolchain
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Find the latest stable compiler tag
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          latest=$(gh release list -R LFDT-Minokawa/compact --limit 100 \
+            --json tagName \
+            --jq '[.[] | .tagName | select(startswith("compactc-v")) | select(test("-rc|-dev") | not)] | .[0]')
+          newest=$(grep -vE '^\s*(#|$)' scripts/supported-versions.txt | tail -1)
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          echo "newest=$newest" >> "$GITHUB_OUTPUT"
+          if [ "$latest" = "$newest" ]; then
+            echo "up_to_date=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "up_to_date=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "Latest stable: $latest (newest supported: $newest)"
+
+      - name: Look for an existing tracking issue
+        id: issue
+        if: steps.check.outputs.up_to_date == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          number=$(gh issue list --state open \
+            --search 'Track Compact toolchain in:title' \
+            --json number --jq '.[0].number // empty')
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare issue body
+        if: steps.check.outputs.up_to_date == 'false' && steps.issue.outputs.number == ''
+        run: |
+          {
+            echo "A newer stable Compact toolchain is available: **${{ steps.check.outputs.latest }}**"
+            echo "(newest supported: \`${{ steps.check.outputs.newest }}\`)."
+            echo
+            echo "### Grammar delta"
+            echo
+            echo '```'
+            ./scripts/grammar-delta.sh "${{ steps.check.outputs.newest }}" "${{ steps.check.outputs.latest }}" 2>&1 || true
+            echo '```'
+            echo
+            echo "Follow the staging workflow in [RELEASING.md](https://github.com/${{ github.repository }}/blob/main/RELEASING.md)."
+          } > /tmp/issue.md
+
+      - name: Open tracking issue
+        if: steps.check.outputs.up_to_date == 'false' && steps.issue.outputs.number == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "Track Compact toolchain ${{ steps.check.outputs.latest }}" \
+            --body-file /tmp/issue.md

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tree-sitter-compact"
 description = "A zero-knowledge smart contract programming language"
-version = "0.2.0"
+version = "0.3.0"
 keywords = ["incremental", "parsing", "tree-sitter", "compact"]
 classifiers = [
   "Intended Audience :: Developers",
@@ -31,9 +31,9 @@ Issues = "https://github.com/1NickPappas/compact-tree-sitter/issues"
 core = ["tree-sitter~=0.24"]
 
 [tool.compact]
-language = "0.23.0"
-toolchain = "0.31.1"
-runtime = "0.16.0"
+language = ">=0.23.0 <=0.27.0"
+toolchain = ">=0.31.1 <=0.35.0"
+runtime = ">=0.16.0 <=0.20.0"
 
 [tool.cibuildwheel]
 build = "cp310-*"

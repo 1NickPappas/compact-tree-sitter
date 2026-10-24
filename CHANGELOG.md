@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-10-24
+
+Adds the syntax introduced by Compact toolchains 0.34.0 and 0.35.0. The grammar
+now parses the language from toolchain 0.31.1 through 0.35.0 (language 0.23.0 –
+0.27.0) as a single superset grammar, so one release serves both ledger 8
+(mainnet today) and ledger 9 (upcoming).
+
+### Added
+
+- `contract implements <type>;` (`contract_implements_declaration`), from
+toolchain 0.34.0.
+- `emit(<expr>)` (`emit_term`), from toolchain 0.34.0.
+- Compiler-accurate Unicode identifier categories: initial `Lu Ll Lt Lm Lo Nl`
+(or `_`/`$`), with `Mn Mc Nd Pc` also allowed after the first character.
+
+### Changed
+
+- The supported Compact version is now recorded as a range in the package
+metadata (`compact.language` = `>=0.23.0 <=0.27.0`, `compact.toolchain` =
+`>=0.31.1 <=0.35.0`, `compact.runtime` = `>=0.16.0 <=0.20.0`) and in the
+README/`COMPATIBILITY.md`.
+- Conformance baselines are per compiler tag
+(`scripts/conformance-baseline-<tag>.txt`), driven by
+`scripts/supported-versions.txt`; the pinned tag is now `compactc-v0.35.0`.
+
+> Note: tree-sitter does not evaluate `pragma language_version`. The grammar
+> accepts the union of supported syntax; the Compact compiler remains the
+> authority on version enforcement.
+
 ## [0.2.0] - 2025-10-23
 
 Compiler-aligned grammar with stricter 0.31.1 semantics. This is a **breaking
@@ -83,4 +112,5 @@ tracked in the README and in the package metadata, not in the grammar version.
 
 [0.1.0]: https://github.com/1NickPappas/compact-tree-sitter/releases/tag/v0.1.0
 [0.2.0]: https://github.com/1NickPappas/compact-tree-sitter/releases/tag/v0.2.0
+[0.3.0]: https://github.com/1NickPappas/compact-tree-sitter/releases/tag/v0.3.0
 [semver]: https://semver.org/spec/v2.0.0.html

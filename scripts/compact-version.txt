@@ -1,1 +1,1 @@
-compactc-v0.31.1
+compactc-v0.35.0

@@ -3,7 +3,12 @@ name: Publish npm
 on:
   push:
     tags: ["*"]
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      dist-tag:
+        description: npm dist-tag (defaults to `next` for pre-release tags, `latest` otherwise)
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -92,7 +97,19 @@ jobs:
           merge-multiple: true
       - name: Move Wasm binary to package root
         run: mv -v prebuilds/*.wasm . || true
+      - name: Determine npm dist-tag
+        id: dist
+        run: |
+          tag="${{ inputs.dist-tag }}"
+          if [ -z "$tag" ]; then
+            case "${GITHUB_REF_NAME}" in
+              *-*) tag=next ;;
+              *) tag=latest ;;
+            esac
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "Publishing to npm with dist-tag: $tag"
       - name: Publish to npm
-        run: npm publish
+        run: npm publish --tag "${{ steps.dist.outputs.tag }}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

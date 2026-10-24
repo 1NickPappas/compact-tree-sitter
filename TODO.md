@@ -19,8 +19,8 @@ must-fail harness is still wanted:
 - [ ] Seed the corpus from the upstream negative fixtures:
       `examples/reserved/`, `examples/composable/`, and the
       `examples/bugs/` fuzz files (see `test/corpus` validation notes).
-- [ ] Decide whether to keep the legacy `assert expr "msg";` statement form
-      (superset) or remove it for strict 0.31.1 parsing.
+- [x] Decided: the legacy `assert expr "msg";` form was removed in 0.2.0; the
+      grammar is strict about dropped syntax.
 
 ## Upstream alignment
 
@@ -71,8 +71,28 @@ See the investigation notes: the WIP branch `feat/grammar-v0.30.0` targets the
       0.2.0 grammar, so porting its 0.30-era expected trees adds no acceptance
       coverage. Skipped; the conformance gate is the coverage guard.
 - [x] Phase 4 — published 0.2.0 (crates.io + GitHub release).
-- [ ] Optional: advertise `0.22.x–0.23.0` language support after verifying
-      the near-identical 0.30.0 grammar passes the conformance gate.
+- [x] Superseded: 0.3.x advertises Compact language 0.23.0–0.27.0 (toolchain
+      0.31.1–0.35.0) as a single superset grammar.
+
+## 0.3.0 — Compact 0.34.0 / 0.35.0 support
+
+Target: parse the language introduced by toolchain 0.34.0 (language 0.26.0) and
+0.35.0 (language 0.27.0) without regressing the 0.31.1 (mainnet) line. The two
+releases are grammar-identical; all new syntax (`implements`, `emit`, identifier
+categories) landed at once.
+
+- [x] Added `contract implements <type>;` (`contract_implements_declaration`).
+- [x] Added `emit(<expr>)` (`emit_term`).
+- [x] Compiler-accurate Unicode identifier categories (initial `Lu Ll Lt Lm Lo
+      Nl`, subsequent adds `Mn Mc Nd Pc`).
+- [x] Per-tag conformance baselines (`scripts/conformance-baseline-<tag>.txt`) +
+      `scripts/supported-versions.txt`; conformance green for 0.31.1 and 0.35.0.
+- [x] Conformance matrix in CI and a weekly `watch-compact.yml` tracking issue.
+- [x] `COMPATIBILITY.md` and `RELEASING.md`; metadata records a supported range.
+- [ ] Publish 0.3.0 to crates.io, npm, and PyPI.
+
+Note: the grammar is a superset and does **not** evaluate `pragma
+language_version`; the compiler enforces the version. See `COMPATIBILITY.md`.
 
 ## Tracking a moving language target
 
@@ -82,5 +102,6 @@ See the investigation notes: the WIP branch `feat/grammar-v0.30.0` targets the
 - [x] Document the versioning policy: independent SemVer for the grammar with a
       README compatibility table and package metadata (`compact.language`,
       `compact.toolchain`).
-- [ ] On each Compact language release, bump the grammar minor/major per the
-      README table and record the new supported version.
+- [x] On each Compact language release, bump the grammar minor/major per the
+      README table and record the new supported version. (0.34.0/0.35.0 done in
+      0.3.0; the weekly `watch-compact.yml` opens an issue for the next one.)

@@ -90,6 +90,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "contract_implements_declaration"
+        },
+        {
+          "type": "SYMBOL",
           "name": "type_alias_declaration"
         }
       ]
@@ -1519,6 +1523,31 @@
             "type": "SYMBOL",
             "name": "type"
           }
+        }
+      ]
+    },
+    "contract_implements_declaration": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "contract"
+        },
+        {
+          "type": "STRING",
+          "value": "implements"
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
         }
       ]
     },
@@ -3436,6 +3465,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "emit_term"
+        },
+        {
+          "type": "SYMBOL",
           "name": "bytes_literal"
         },
         {
@@ -3891,6 +3924,35 @@
             "content": {
               "type": "SYMBOL",
               "name": "str"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          }
+        ]
+      }
+    },
+    "emit_term": {
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "emit"
+          },
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expr"
             }
           },
           {
@@ -4413,35 +4475,35 @@
     },
     "id": {
       "type": "PATTERN",
-      "value": "[\\p{L}_$][\\p{L}\\p{N}_$]*"
+      "value": "[\\p{L}\\p{Nl}_$][\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}$]*"
     },
     "module_name": {
       "type": "PATTERN",
-      "value": "[\\p{L}_$][\\p{L}\\p{N}_$]*"
+      "value": "[\\p{L}\\p{Nl}_$][\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}$]*"
     },
     "function_name": {
       "type": "PATTERN",
-      "value": "[\\p{L}_$][\\p{L}\\p{N}_$]*"
+      "value": "[\\p{L}\\p{Nl}_$][\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}$]*"
     },
     "struct_name": {
       "type": "PATTERN",
-      "value": "[\\p{L}_$][\\p{L}\\p{N}_$]*"
+      "value": "[\\p{L}\\p{Nl}_$][\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}$]*"
     },
     "enum_name": {
       "type": "PATTERN",
-      "value": "[\\p{L}_$][\\p{L}\\p{N}_$]*"
+      "value": "[\\p{L}\\p{Nl}_$][\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}$]*"
     },
     "contract_name": {
       "type": "PATTERN",
-      "value": "[\\p{L}_$][\\p{L}\\p{N}_$]*"
+      "value": "[\\p{L}\\p{Nl}_$][\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}$]*"
     },
     "tvar_name": {
       "type": "PATTERN",
-      "value": "[\\p{L}_$][\\p{L}\\p{N}_$]*"
+      "value": "[\\p{L}\\p{Nl}_$][\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}$]*"
     },
     "type_name": {
       "type": "PATTERN",
-      "value": "[\\p{L}_$][\\p{L}\\p{N}_$]*"
+      "value": "[\\p{L}\\p{Nl}_$][\\p{L}\\p{Nl}\\p{Mn}\\p{Mc}\\p{Nd}\\p{Pc}$]*"
     },
     "nat": {
       "type": "CHOICE",
