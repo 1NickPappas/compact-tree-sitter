@@ -52,3 +52,10 @@ Cargo.lock
 parser.so
 parser.dylib
 parser.dll
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Swift Package Manager resolution (regenerated per environment)
+Package.resolved
