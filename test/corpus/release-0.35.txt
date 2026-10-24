@@ -1,0 +1,145 @@
+==================
+contract implements declaration
+==================
+
+contract implements CX;
+
+---
+
+(source_file
+  (contract_implements_declaration
+    (type
+      (tref
+        (id)))))
+
+==================
+contract implements inside a module
+==================
+
+module M {
+  contract implements CX;
+}
+
+---
+
+(source_file
+  (mdefn
+    (module_name)
+    (contract_implements_declaration
+      (type
+        (tref
+          (id))))))
+
+==================
+emit term
+==================
+
+circuit f() : [] {
+  emit(ShieldedSpend { nullifier: disclose(n) });
+  return [];
+}
+
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (expression_sequence_stmt
+          (expr_seq
+            (expr
+              (term
+                (emit_term
+                  (expr
+                    (term
+                      (struct_term
+                        (tref
+                          (id))
+                        (struct_arg
+                          (struct_named_field_initializer
+                            (id)
+                            (expr
+                              (term
+                                (disclose_term
+                                  (expr
+                                    (term
+                                      (id)))))))))))))))))
+      (stmt
+        (return_stmt
+          (expr_seq
+            (expr
+              (term
+                (array_literal)))))))))
+
+==================
+emit remains a valid identifier
+==================
+
+circuit f() : [] {
+  const emit = 1;
+  return [];
+}
+
+---
+
+(source_file
+  (cdefn
+    (function_name)
+    (type)
+    (block
+      (stmt
+        (const_stmt
+          (const_binding
+            (pattern
+              (id))
+            (expr
+              (term
+                (lit
+                  (nat)))))))
+      (stmt
+        (return_stmt
+          (expr_seq
+            (expr
+              (term
+                (array_literal)))))))))
+
+==================
+identifier with Nl initial
+==================
+
+ledger Ⅻ : Field;
+
+---
+
+(source_file
+  (ldecl
+    (id)
+    (type)))
+
+==================
+identifier with Mn subsequent
+==================
+
+ledger á : Field;
+
+---
+
+(source_file
+  (ldecl
+    (id)
+    (type)))
+
+==================
+identifier with Pc subsequent
+==================
+
+ledger a‿b : Field;
+
+---
+
+(source_file
+  (ldecl
+    (id)
+    (type)))

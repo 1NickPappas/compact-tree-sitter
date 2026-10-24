@@ -804,6 +804,22 @@
     }
   },
   {
+    "type": "contract_implements_declaration",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "contract_name",
     "named": true,
     "fields": {}
@@ -916,6 +932,22 @@
         "types": [
           {
             "type": "type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "emit_term",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expr",
             "named": true
           }
         ]
@@ -1723,6 +1755,10 @@
             "named": true
           },
           {
+            "type": "contract_implements_declaration",
+            "named": true
+          },
+          {
             "type": "ecdecl",
             "named": true
           },
@@ -2442,6 +2478,10 @@
           "named": true
         },
         {
+          "type": "contract_implements_declaration",
+          "named": true
+        },
+        {
           "type": "ecdecl",
           "named": true
         },
@@ -2700,6 +2740,10 @@
         },
         {
           "type": "disclose_term",
+          "named": true
+        },
+        {
+          "type": "emit_term",
           "named": true
         },
         {
@@ -3180,6 +3224,10 @@
     "named": false
   },
   {
+    "type": "emit",
+    "named": false
+  },
+  {
     "type": "enum",
     "named": false
   },
@@ -3213,6 +3261,10 @@
   },
   {
     "type": "if",
+    "named": false
+  },
+  {
+    "type": "implements",
     "named": false
   },
   {

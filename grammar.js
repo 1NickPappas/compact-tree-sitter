@@ -74,6 +74,7 @@ module.exports = grammar({
     //        →    ecdecl
     //        →    struct
     //        →    enumdef
+    //        →    contract-implements-declaration
     _pelt: ($) =>
       choice(
         $.pragma,
@@ -88,6 +89,7 @@ module.exports = grammar({
         $.ecdecl,
         $.struct,
         $.enumdef,
+        $.contract_implements_declaration,
         $.type_alias_declaration,
       ),
 
@@ -351,6 +353,17 @@ module.exports = grammar({
         ')',
         ':',
         field('type', $.type),
+      ),
+
+    // Contract-implements-declaration (contract-implements-declaration)
+    //
+    // contract-implements-declaration → contract implements type ;
+    contract_implements_declaration: ($) =>
+      seq(
+        'contract',
+        'implements',
+        field('type', $.type),
+        ';',
       ),
 
     // Structure-definition (struct)
@@ -682,6 +695,7 @@ module.exports = grammar({
         $.slice_term, // Slice with size and range expressions
         $.disclose_term, // Disclose with single expression
         $.assert_term, // Assert with condition and message
+        $.emit_term, // Emit with a single expression
         $.bytes_literal, // Bytes literal with optional spread
         $.struct_term, // Struct literal with type reference
         $.array_literal, // Array literal with optional spread
@@ -697,6 +711,7 @@ module.exports = grammar({
     slice_term: ($) => seq('slice', '<', field('tsize', $.tsize), '>', '(', field('expr', $.expr), ',', field('expr', $.expr), ')'),
     disclose_term: ($) => seq('disclose', '(', field('expr', $.expr), ')'),
     assert_term: ($) => prec(2, seq('assert', '(', field('condition', $.expr), ',', field('message', $.str), ')')),
+    emit_term: ($) => prec(2, seq('emit', '(', field('value', $.expr), ')')),
     array_literal: ($) => seq('[', commaSep(field('element', $.tuple_arg)), ']'),
     bytes_literal: ($) => seq('Bytes', '[', commaSep(field('element', $.tuple_arg)), ']'),
     tuple_arg: ($) => choice($.spread_element, field('expr', $.expr)),
@@ -781,16 +796,19 @@ module.exports = grammar({
 
     // identifier (id, module-name, function-name, struct-name, enum-name, contract-name, tvar-name)
     //
-    // Identifiers have the same syntax as TypeScript identifiers: a Unicode
-    // letter, `_`, or `$`, followed by letters, digits, `_`, or `$`.
-    id: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
-    module_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
-    function_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
-    struct_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
-    enum_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
-    contract_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
-    tvar_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
-    type_name: ($) => /[\p{L}_$][\p{L}\p{N}_$]*/,
+    // Matches the compiler's identifier rule, which follows
+    // https://tc39.es/ecma262/#sec-names-and-keywords and
+    // https://www.unicode.org/reports/tr31/#Table_Lexical_Classes_for_Identifiers:
+    // an initial character in Lu, Ll, Lt, Lm, Lo, or Nl (or `_`/`$`), followed by
+    // those plus Mn, Mc, Nd, and Pc.
+    id: ($) => /[\p{L}\p{Nl}_$][\p{L}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$]*/,
+    module_name: ($) => /[\p{L}\p{Nl}_$][\p{L}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$]*/,
+    function_name: ($) => /[\p{L}\p{Nl}_$][\p{L}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$]*/,
+    struct_name: ($) => /[\p{L}\p{Nl}_$][\p{L}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$]*/,
+    enum_name: ($) => /[\p{L}\p{Nl}_$][\p{L}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$]*/,
+    contract_name: ($) => /[\p{L}\p{Nl}_$][\p{L}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$]*/,
+    tvar_name: ($) => /[\p{L}\p{Nl}_$][\p{L}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$]*/,
+    type_name: ($) => /[\p{L}\p{Nl}_$][\p{L}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}$]*/,
 
     // field-literal (nat)
     //

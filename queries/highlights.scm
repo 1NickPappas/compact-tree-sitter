@@ -48,6 +48,8 @@
 "fold" @keyword
 "slice" @keyword
 "disclose" @keyword
+"emit" @keyword
+"implements" @keyword
 "pad" @keyword
 
 ; Operators

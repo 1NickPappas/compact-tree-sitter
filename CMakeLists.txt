@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(tree-sitter-compact
-        VERSION "0.2.0"
+        VERSION "0.3.0"
         DESCRIPTION "A zero-knowledge smart contract programming language"
         HOMEPAGE_URL "https://github.com/1NickPappas/compact-tree-sitter"
         LANGUAGES C)
