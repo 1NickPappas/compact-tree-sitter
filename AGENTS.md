@@ -223,6 +223,11 @@ re-tag instead. `0.1.0`, `0.2.0`, and `0.3.0` are published on all three.
 - The published crate compiles the **committed** `src/parser.c`, so it must be in
   sync with `grammar.js` (an earlier release shipped stale generated files; the
   verify job now guards this).
+- **The crates job runs with `generate: false`.** The reusable package-crates
+  workflow regenerates with the *latest* tree-sitter CLI, whose output differs
+  from the pinned `v0.26.13` parser we commit; with `generate: true` that leaves
+  `src/parser.c` dirty and `cargo publish` aborts. The `verify` job already
+  checks `src/` is current with the pinned CLI, so publish the committed files.
 
 ### GitHub Actions
 

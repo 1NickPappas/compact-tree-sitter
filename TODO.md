@@ -89,7 +89,7 @@ categories) landed at once.
       `scripts/supported-versions.txt`; conformance green for 0.31.1 and 0.35.0.
 - [x] Conformance matrix in CI and a weekly `watch-compact.yml` tracking issue.
 - [x] `COMPATIBILITY.md` and `RELEASING.md`; metadata records a supported range.
-- [ ] Publish 0.3.0 to crates.io, npm, and PyPI.
+- [x] Published 0.3.0 to crates.io, npm, and PyPI, plus GitHub release v0.3.0.
 
 Note: the grammar is a superset and does **not** evaluate `pragma
 language_version`; the compiler enforces the version. See `COMPATIBILITY.md`.
