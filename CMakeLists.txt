@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(tree-sitter-compact
-        VERSION "0.1.0"
+        VERSION "0.2.0"
         DESCRIPTION "A zero-knowledge smart contract programming language"
-        HOMEPAGE_URL "https://github.com/midnight-ntwrk/tree-sitter-compact"
+        HOMEPAGE_URL "https://github.com/1NickPappas/compact-tree-sitter"
         LANGUAGES C)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)

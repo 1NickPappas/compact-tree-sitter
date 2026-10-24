@@ -4,6 +4,10 @@ Thanks for your interest in contributing to `compact-tree-sitter`! This is a
 community-maintained [tree-sitter][tree-sitter] grammar for the
 [Compact programming language][compact].
 
+> Working with an AI coding agent? Point it at [AGENTS.md](AGENTS.md) first — it
+> documents the invariants, canonical commands, release process, and known
+> gotchas.
+
 ## Getting started
 
 - **Review existing issues and pull requests** before submitting, to avoid
