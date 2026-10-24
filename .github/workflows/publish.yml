@@ -75,7 +75,11 @@ jobs:
     uses: tree-sitter/workflows/.github/workflows/package-crates.yml@main
     with:
       package-name: tree-sitter-compact
-      generate: true
+      # Do NOT regenerate here: the reusable workflow uses the latest
+      # tree-sitter CLI, which differs from the pinned v0.26.13 output and would
+      # leave src/parser.c dirty, failing `cargo publish`. The `verify` job
+      # already checks src/ is current with the pinned CLI.
+      generate: false
     secrets:
       CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
