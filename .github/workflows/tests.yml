@@ -6,29 +6,31 @@ on:
   pull_request:
     branches: ["main"]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  test:
+    name: Parser and bindings
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v6
+      # Pinned so the "Verify generated parser" step compares against the same
+      # tree-sitter release that generated the committed src/parser.c (0.26.13).
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v2
         with:
-          node-version: "latest"
-          cache: npm
+          tree-sitter-ref: v0.26.13
 
-      - name: 🛠️ Install dependencies
-        run: npm ci
-
-      - name: 🧹 Run ESLint
-        run: npm run lint
-
-      - name: 🧪 Run tree-sitter tests
-        run: npm run test
-
-      - name: 🧱 Verify the parser is up to date
-        run: |
-          npm run generate
-          git diff --exit-code src/
+      - name: Run parser and binding tests
+        uses: tree-sitter/parser-test-action@v3
+        with:
+          # Regenerate and fail if src/parser.c is out of date, then run the
+          # corpus tests, then the binding tests for every binding we ship.
+          test-rust: true
+          test-python: true
+          test-go: true
+          test-swift: true

@@ -70,7 +70,8 @@ files than that branch (355/384 vs 350/384) and failed nothing it passed.
 | `scripts/conformance.sh` | Parse the whole compiler corpus; regression gate |
 | `scripts/conformance-baseline.txt` | Expected-failure list (19 entries) |
 | `scripts/grammar-delta.sh` | Diff the language grammar between two compiler tags |
-| `.github/workflows/tests.yml` | Lint + corpus tests + "parser is up to date" |
+| `.github/workflows/tests.yml` | Official tree-sitter parser + binding tests (Rust/Python/Go/Swift) |
+| `.github/workflows/lint.yml` | ESLint (`eslint-config-treesitter`) |
 | `.github/workflows/conformance.yml` | Conformance gate (push/PR/weekly) |
 | `.github/workflows/publish.yml` | GitHub release + crates.io + PyPI |
 | `.github/workflows/publish-npm.yml` | npm (dedicated; see gotchas) |
@@ -210,6 +211,30 @@ re-tag instead. `0.1.0` and `0.2.0` are already published on all three.
   `skip-github-release`, and `skip-pypi`.
 - PyPI's reusable workflow warns that `attestations: true` is ignored when an
   explicit password/token is set. That is expected while using `PYPI_API_TOKEN`.
+
+### CI and the official tree-sitter actions
+
+- `tests.yml` uses the official `tree-sitter/setup-action/cli@v2` plus
+  `tree-sitter/parser-test-action@v3`, which regenerates and verifies
+  `src/parser.c`, runs the corpus tests, and runs the Rust/Python/Go/Swift
+  binding tests.
+- **The CLI ref is pinned (`tree-sitter-ref: v0.26.13`)** so the "generated
+  parser is current" check compares against the same release that generated the
+  committed `src/parser.c`. If you regenerate with a different CLI version,
+  bump the pinned ref in `tests.yml` and `conformance.yml` together.
+- The action's generate check only diffs `src/parser.c`, not `grammar.json` or
+  `node-types.json`; keep those in sync by running `npm run generate`.
+- `eslint` lives in `lint.yml` because `parser-test-action` does not lint.
+- `tree-sitter-ref` values starting with `v` download a prebuilt CLI release
+  (fast); anything else is built from source with Cargo.
+
+### Swift binding
+
+- `Package.swift` must declare the external product explicitly:
+  `.product(name: "SwiftTreeSitter", package: "swift-tree-sitter")`. A bare
+  `"SwiftTreeSitter"` fails SwiftPM resolution.
+- The Swift test needs a full toolchain with `XCTest`; a CommandLineTools-only
+  macOS cannot run it locally even though CI can.
 
 ### Corpus tests
 

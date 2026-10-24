@@ -28,9 +28,16 @@ must-fail harness is still wanted:
 - [x] Bump Rust `dev-dependencies.tree-sitter`.
 - [x] Add `path` / `highlights` to `tree-sitter.json`.
 - [x] Fix `Makefile` fork URL and version.
-- [ ] Migrate CI to the official actions:
-      `tree-sitter/setup-action/cli@v2` + `tree-sitter/parser-test-action@v3`
-      (replaces the bun-based test job) and add an `eslint` `lint.yml`.
+- [x] Migrate CI to the official actions:
+      `tree-sitter/setup-action/cli@v2` + `tree-sitter/parser-test-action@v3`.
+      CLI pinned to `v0.26.13` to match the committed `src/parser.c`. Binding
+      tests enabled for Rust, Python, Go, and Swift. Added an `eslint`
+      `lint.yml`.
+      - [x] Fixed `Package.swift` (external product must be declared as
+            `.product(name: "SwiftTreeSitter", package: "swift-tree-sitter")`)
+            so the Swift binding/tests actually build.
+      - [ ] Optional: add a Node binding test (`bindings/node/*_test.js`) so
+            `test-node` can be enabled too.
 - [ ] Optional: add `fuzz.yml` using `tree-sitter/fuzz-action@v4`.
 - [ ] Optional: add `queries/tags.scm` and/or `queries/injections.scm` if
       editors need them, and register them in `tree-sitter.json`.
