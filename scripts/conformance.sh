@@ -46,7 +46,9 @@ fi
 
 cache_dir="${CONFORMANCE_CACHE:-$repo_root/.cache}"
 src_dir="$cache_dir/compact-$tag"
-baseline="$script_dir/conformance-baseline.txt"
+# One baseline per compiler tag, so a multi-version matrix can check each line
+# against its own expected-failure set (see scripts/supported-versions.txt).
+baseline="$script_dir/conformance-baseline-$tag.txt"
 
 # 1. Fetch and extract the compiler tree for the pinned tag, if not cached.
 if [ ! -d "$src_dir" ]; then
@@ -112,7 +114,7 @@ if [ "$update_baseline" = "yes" ]; then
 fi
 
 if [ ! -f "$baseline" ]; then
-  echo "no baseline at $baseline; run: scripts/conformance.sh --update-baseline" >&2
+  echo "no baseline at $baseline; run: scripts/conformance.sh $tag --update-baseline" >&2
   exit 1
 fi
 

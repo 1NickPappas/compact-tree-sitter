@@ -14,17 +14,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  conformance:
-    name: Parse the Compact compiler corpus
+  versions:
+    name: List supported versions
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.list.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Read scripts/supported-versions.txt
+        id: list
+        run: |
+          matrix=$(grep -vE '^\s*(#|$)' scripts/supported-versions.txt \
+            | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  conformance:
+    name: Parse ${{ matrix.tag }}
+    needs: versions
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tag: ${{ fromJSON(needs.versions.outputs.matrix) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      # Pinned to the release that generated the committed src/parser.c.
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
         with:
           tree-sitter-ref: v0.26.13
 
-      - name: Run conformance gate
-        run: ./scripts/conformance.sh
+      - name: Run conformance gate for ${{ matrix.tag }}
+        run: ./scripts/conformance.sh "${{ matrix.tag }}"
